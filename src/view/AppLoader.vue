@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/AppLoader.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-06 21:34:04
- * @LastEditTime: 2021-08-10 23:08:19
+ * @LastEditTime: 2021-08-10 23:18:09
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -312,7 +312,7 @@
         left: -5px !important;
         right: -5px !important;
         top: -5px !important;
-        bottom: 60px !important;
+        bottom: 47px !important;
     }
 
     .isFullScreen {
