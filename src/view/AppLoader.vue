@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/AppLoader.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-06 21:34:04
- * @LastEditTime: 2021-08-10 22:26:00
+ * @LastEditTime: 2021-08-10 23:08:19
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -11,7 +11,7 @@
 
 <template>
     <div class="moveBg" @mousemove="mouseMove" @mouseup="mouseUp" @mouseleave.stop="mouseLeave"
-        :style="{pointerEvents:isBoxResizing?'auto':'none'}">
+        :style="{pointerEvents:isBoxResizing||isBoxMoving?'auto':'none'}">
         <div class="box"
             :style="{left:nowRect.left+'px',top:nowRect.top+'px',bottom:nowRect.bottom+'px',right:nowRect.right+'px'}"
             :class="getExtBoxClasses()">
