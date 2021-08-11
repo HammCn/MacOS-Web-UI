@@ -74,7 +74,7 @@ body, html {
 
 audio {
     position: relative;
-    z-index: 99999;
+    z-index: 99;
 }
 
 [v-cloak] {

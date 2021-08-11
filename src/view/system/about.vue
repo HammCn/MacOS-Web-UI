@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/system/about.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:56:04
- * @LastEditTime: 2021-08-10 22:16:52
+ * @LastEditTime: 2021-08-11 22:04:37
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: Index
@@ -29,6 +29,10 @@
         color: #333;
         text-shadow: none;
         font-weight: 300;
+    }
+
+    .info {
+        flex-grow: 1;
     }
 
     .top {

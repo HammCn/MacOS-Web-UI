@@ -25,11 +25,12 @@
 }
 
 .fade-window-enter-active {
-    animation: fade-window-in .3s;
+    /* animation: fade-window-in .1s; */
+    opacity: 1;
 }
 
 .fade-window-leave-active {
-    animation: fade-window-out .5s;
+    animation: fade-window-out .8s;
 }
 
 @keyframes fade-window-in {
@@ -45,11 +46,16 @@
     0% {
         opacity: 1;
     }
+    30% {
+        opacity: 0.8;
+        left: 30%;
+        right: 30%;
+    }
     100% {
         opacity: 0;
         left: 100%;
         right: 100%;
-        top: 200%;
+        top: 100%;
     }
 }
 

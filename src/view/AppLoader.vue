@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/AppLoader.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-06 21:34:04
- * @LastEditTime: 2021-08-10 23:18:09
+ * @LastEditTime: 2021-08-11 22:46:00
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -13,7 +13,7 @@
     <div class="moveBg" @mousemove="mouseMove" @mouseup="mouseUp" @mouseleave.stop="mouseLeave"
         :style="{pointerEvents:isBoxResizing||isBoxMoving?'auto':'none'}">
         <div class="box"
-            :style="{left:nowRect.left+'px',top:nowRect.top+'px',bottom:nowRect.bottom+'px',right:nowRect.right+'px'}"
+            :style="{left:nowRect.left+'px',top:nowRect.top+'px',bottom:nowRect.bottom+'px',right:nowRect.right+'px',zIndex:app.isTop?98:88}"
             :class="getExtBoxClasses()">
             <div class="box-top">
                 <div class="box-top-left" @mousedown="resizeMouseDown"></div>
@@ -23,11 +23,11 @@
             <div class="box-center">
                 <div class="box-center-left" @mousedown="resizeMouseDown"></div>
                 <div class="box-center-center loader" @click="showThisApp">
-                    <div class="app-bar" :style="{backgroundColor:app.tabbarBgColor}" @mousedown.stop="positionMouseDown"
-                        v-on:dblclick="appBarDoubleClicked">
+                    <div class="app-bar" :style="{backgroundColor:app.tabbarBgColor}"
+                        @mousedown.stop="positionMouseDown" v-on:dblclick="appBarDoubleClicked">
                         <div class="controll">
                             <div class="close" @click.stop="close"></div>
-                            <div class="min" @click.stop="close"></div>
+                            <div class="min" @click.stop="hide"></div>
                             <div class="full" :class="app.disableResize?'full-disabled':''" @click="switchFullScreen">
                             </div>
                         </div>
@@ -84,13 +84,12 @@
             }
         },
         created() {
-            console.log(this.app)
             if (this.app.width) {
                 this.nowRect.left = this.nowRect.right = (document.body.clientWidth - this.app.width) / 2
             }
             if (this.app.height) {
-                this.nowRect.bottom = (document.body.clientHeight - this.app.height) / 2 + 100
-                this.nowRect.top = (document.body.clientHeight - this.app.height) / 2 - 100
+                this.nowRect.bottom = (document.body.clientHeight - this.app.height) / 2 + 50
+                this.nowRect.top = (document.body.clientHeight - this.app.height) / 2 - 50
             }
         },
         methods: {
@@ -99,6 +98,9 @@
             },
             close() {
                 this.$emit('close', this.app)
+            },
+            hide() {
+                this.$emit('hide', this.app)
             },
             showThisApp() {
                 this.$emit('open', this.app)
@@ -124,6 +126,12 @@
                 }
                 if (this.isFullScreen) {
                     str += "isFullScreen "
+                }
+                if (this.app.disableResize) {
+                    str += "resize-disabled "
+                }
+                if (this.app.isTop) {
+                    str += "isTop "
                 }
                 return str
             },
@@ -298,10 +306,16 @@
         display: flex;
         flex-direction: column;
         border-radius: 10px;
-        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 0px 3px #999;
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(20px);
         overflow: hidden;
+        filter: grayscale(1) brightness(0.9);
+    }
+
+    .isTop .box-center-center {
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+        filter: none;
     }
 
     .box-animation {
@@ -317,7 +331,7 @@
 
     .isFullScreen {
         position: fixed !important;
-        z-index: 99999;
+        z-index: 999 !important;
         bottom: -5px !important;
     }
 
@@ -364,6 +378,7 @@
         display: flex;
         flex-grow: 1;
         flex-direction: column;
+        width: 100%;
     }
 
     .app-bar {
@@ -396,13 +411,13 @@
 
     .app-bar .title {
         flex-grow: 1;
-        color: #333;
         text-align: center;
         margin-right: 80px;
         font-weight: 500;
         text-shadow: none;
         font-size: 13px;
         cursor: move;
+        color: #333;
     }
 
     .controll .close {
@@ -423,6 +438,17 @@
     .full-disabled {
         background: #ccc !important;
         border: 1px solid #ccc !important;
+    }
+
+    .resize-disabled .box-top-left,
+    .resize-disabled .box-top-center,
+    .resize-disabled .box-top-right,
+    .resize-disabled .box-center-left,
+    .resize-disabled .box-center-right,
+    .resize-disabled .box-bottom-left,
+    .resize-disabled .box-bottom-center,
+    .resize-disabled .box-bottom-right {
+        cursor: default
     }
 
     .app-body {

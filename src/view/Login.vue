@@ -1,8 +1,8 @@
 <!--
- * @FilePath: /MacOS/src/view/login.vue
+ * @FilePath: /MacOS/src/view/Login.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-05 20:59:02
- * @LastEditTime: 2021-08-05 23:43:39
+ * @LastEditTime: 2021-08-11 22:43:26
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -38,7 +38,7 @@
         align-items: center;
         color: white;
         margin-top: -100px;
-        z-index: 99999999998;
+        z-index: 99;
         backdrop-filter: blur(20px);
     }
 

@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/DeskTop.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-10 22:27:42
+ * @LastEditTime: 2021-08-11 22:44:32
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -18,7 +18,7 @@
               <div>关于本站</div>
             </el-dropdown-item>
             <el-dropdown-item class="line"></el-dropdown-item>
-            <el-dropdown-item>
+            <el-dropdown-item @click="openAppByKey('system_setting')">
               <div>系统偏好设置</div>
             </el-dropdown-item>
             <el-dropdown-item>
@@ -65,21 +65,24 @@
     </div>
     <div class="body">
       <div class="desktop-app">
-        <div class="app-item" v-for="item in deskTopAppList" :key="item.key" @click="openApp(item)">
-          <div class="icon" :style="{backgroundColor:item.iconBgColor,color:item.iconColor}"><i class="iconfont"
-              :class="item.icon"></i></div>
-          <div class="title">{{item.title}}</div>
-        </div>
+        <template v-for="item in deskTopAppList" :key="item.key">
+          <div class="app-item" @click="openApp(item)" v-if="!item.hideInDesktop">
+            <div class="icon" :style="{backgroundColor:item.iconBgColor,color:item.iconColor}"><i class="iconfont"
+                :class="item.icon"></i></div>
+            <div class="title">{{item.title}}</div>
+          </div>
+        </template>
       </div>
-      <template v-for="item in openAppList" :key="item.key">
-        <transition name="fade-window">
-          <AppLoader :app="item" @open="openApp" @close="closeApp"></AppLoader>
-        </transition>
-      </template>
+      <transition-group name="fade-window">
+        <template v-for="item in openAppList" :key="item.key">
+          <AppLoader :app="item" @open="openApp" @close="closeApp" @hide="hideApp" v-show="!item.hide"></AppLoader>
+        </template>
+      </transition-group>
     </div>
     <div class="footer">
       <div class="space"></div>
-      <div class="tabbar">
+      <div class="dock">
+        <!-- 
         <div class="item"><i style="background-color:#939391" class="iconfont icon-shezhi"></i></div>
         <div class="item"><i style="background-color:#257eef" class="iconfont icon-youjian"></i></div>
         <div class="item"><i style="background-color: #27abed;" class="iconfont icon-shangpu"></i></div>
@@ -106,8 +109,20 @@
         <div class="item"><i style="background-color: #d42927;" class="iconfont icon-weibo1"></i></div>
         <div class="item"><i style="background-color: white;color: #fc0d1b;" class="iconfont icon-Youtube-fill"></i>
         </div>
-        <div class="item"><i style="background-color: #e85349;color: #fff;" class="iconfont icon-google"></i>
-        </div>
+        <div class="item"><i style="background-color: #e85349;color: #fff;" class="iconfont icon-google"></i></div> -->
+
+        <template v-for="item in dockAppList" :key="item.key">
+          <div class="item" @click="openApp(item)" :class="app.key==item.key?'jump':''" v-if="isAppInKeepList(item)">
+            <i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont" :class="item.icon"></i>
+            <div class="dot" v-if="isAppInOpenList(item)"></div>
+          </div>
+        </template>
+        <template v-for="item in openAppList" :key="item.key">
+          <div class="item" @click="openApp(item)" v-if="!isAppInKeepList(item)" :class="app.key==item.key?'jump':''">
+            <i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont" :class="item.icon"></i>
+            <div class="dot" v-if="isAppInOpenList(item)"></div>
+          </div>
+        </template>
       </div>
       <div class="space"></div>
     </div>
@@ -123,11 +138,12 @@
     },
     data() {
       return {
+        app: false,
         menu: [],
         timeString: "",
         openAppList: [],
         deskTopAppList: [],
-        tabAppList: [],
+        dockAppList: [],
         deskTopMenu: [
           {
             key: "desktop",
@@ -175,20 +191,87 @@
           this.timeString = tool.formatTime(new Date(), 'MM-dd HH:mm')
         }, 1000)
       },
-      closeApp(app) {
-        for (let i in this.openAppList) {
-          if (this.openAppList[i].key == app.key) {
-            this.openAppList.splice(i, 1);
+      hideApp(app) {
+        for (let item of this.openAppList) {
+          item.isTop = false
+          if (item.key == app.key) {
+            item.isTop = false
+            item.hide = true
           }
+        }
+        //给关闭动画一点时间
+        setTimeout(() => {
+          for (let i = this.openAppList.length - 1; i >= 0; i--) {
+            if (!this.openAppList[i].hide) {
+              this.openAppList[i].isTop = true
+              this.app = this.openAppList[i]
+            }
+          }
+        }, 500)
+      },
+      closeApp(app) {
+        if (app.hideWhenClose) {
+          for (let i in this.openAppList) {
+            if (this.openAppList[i].key == app.key) {
+              this.openAppList[i].hide = true
+              break
+            }
+          }
+        } else {
+          for (let i in this.openAppList) {
+            if (this.openAppList[i].key == app.key) {
+              this.openAppList.splice(i, 1)
+              break
+            }
+          }
+          //给关闭动画一点时间
+          setTimeout(() => {
+            for (let i = this.openAppList.length - 1; i >= 0; i--) {
+              if (!this.openAppList[i].hide) {
+                this.openAppList[i].isTop = true
+                this.app = this.openAppList[i]
+              }
+            }
+          }, 500)
         }
       },
       openApp(app) {
+        this.app = app
         for (let i in this.openAppList) {
           if (this.openAppList[i].key == app.key) {
-            this.openAppList.splice(i, 1);
+            this.openAppList[i].hide = false
+            this.openAppList[i].isTop = true
+            break
           }
         }
-        this.openAppList.push(app);
+        let isExist = false
+        for (let item of this.openAppList) {
+          item.isTop = false
+          if (item.key == app.key) {
+            item.isTop = true
+            isExist = true
+          }
+        }
+        if (!isExist) {
+          app.isTop = true
+          this.openAppList.push(app)
+        }
+      },
+      isAppInKeepList(app) {
+        for (let item of this.dockAppList) {
+          if (item.key == app.key) {
+            return true;
+          }
+        }
+        return false;
+      },
+      isAppInOpenList(app) {
+        for (let item of this.openAppList) {
+          if (item.key == app.key) {
+            return true;
+          }
+        }
+        return false;
       },
       openAppByKey(key) {
         let app = AppModel.getAppByKey(key)
@@ -197,37 +280,46 @@
         }
       },
       loadApp() {
-        this.tabAppList = tool.getTabApp()
+        this.dockAppList = tool.getDockAppList()
         this.deskTopAppList = tool.getDeskTopApp()
-        this.$nextTick(() => {
-          let children = document.querySelector(".tabbar").children
-          for (let i = 0; i < children.length; i++) {
-            children[i].addEventListener("mouseover", () => {
-              try {
-                children[i].previousSibling.className = "item nearby"
-                children[i].nextSibling.className = "item nearby"
-                children[i].previousSibling.previousSibling.className = "item nearby1"
-                children[i].nextSibling.nextSibling.className = "item nearby1"
-                children[i].previousSibling.previousSibling.previousSibling.className = "item nearby2"
-                children[i].nextSibling.nextSibling.nextSibling.className = "item nearby2"
-              } catch (e) {
-                //DOM不存在 捕获
-              }
-            })
-            children[i].addEventListener("mouseout", () => {
-              try {
-                children[i].previousSibling.className = "item"
-                children[i].nextSibling.className = "item"
-                children[i].previousSibling.previousSibling.className = "item"
-                children[i].nextSibling.nextSibling.className = "item"
-                children[i].previousSibling.previousSibling.previousSibling.className = "item"
-                children[i].nextSibling.nextSibling.nextSibling.className = "item"
-              } catch (e) {
-                //DOM不存在 捕获
-              }
-            })
+      },
+      dockMouseOver(e) {
+        let dom = e.target;
+        let prev = dom
+        let next = dom
+        for (let _temp = 0; _temp <= 2; _temp++) {
+          try {
+            next = next.nextElementSibling
+            next.className = "item nearby" + (_temp == 0 ? "" : _temp)
+          } catch (e) {
+            //DOM不存在 捕获
           }
-        })
+          try {
+            prev = prev.previousElementSibling
+            prev.className = "item nearby" + (_temp == 0 ? "" : _temp)
+          } catch (e) {
+            //DOM不存在 捕获
+          }
+        }
+      },
+      dockMouseOut(e) {
+        let dom = e.target;
+        let prev = dom
+        let next = dom
+        for (let _temp = 0; _temp <= 2; _temp++) {
+          try {
+            next = next.nextElementSibling
+            prev.className = "item"
+          } catch (e) {
+            //DOM不存在 捕获
+          }
+          try {
+            prev = prev.previousElementSibling
+            prev.className = "item"
+          } catch (e) {
+            //DOM不存在 捕获
+          }
+        }
       }
     }
   }
@@ -262,7 +354,7 @@
     align-items: center;
     justify-content: center;
     padding: 0px 5px;
-    z-index: 9999;
+    z-index: 100;
   }
 
   .space {
@@ -315,6 +407,24 @@
     justify-content: center;
   }
 
+  .jump {
+    animation: jumpAnimation 0.8s ease 1;
+  }
+
+  @keyframes jumpAnimation {
+    0% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+
+    0% {
+      transform: translateY(0);
+    }
+  }
+
   .menu .item:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
@@ -341,6 +451,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
   }
 
   .datetime:hover,
@@ -367,10 +478,10 @@
     align-items: center;
     display: flex;
     flex-direction: row;
-    z-index: 9999;
+    z-index: 100;
   }
 
-  .footer .tabbar {
+  .footer .dock {
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -381,11 +492,26 @@
     padding: 2px;
   }
 
-  .tabbar .item {
+  .dock .item {
     padding: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
 
-  .tabbar .item .iconfont {
+  .dock .dot {
+    width: 3px;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    bottom: 0px;
+    border-radius: 5px;
+    display: inline-block;
+    font-size: 0;
+  }
+
+  .dock .item .iconfont {
     cursor: pointer;
     border-radius: 20px;
     padding: 2px;
@@ -402,25 +528,25 @@
     transition: transform .3s, margin .3s;
   }
 
-  .tabbar .item:hover .iconfont {
+  .dock .item:hover .iconfont {
     transform: scale(2) translateY(-10px);
     margin: 0px 15px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
   }
 
-  .tabbar .nearby .iconfont {
+  .dock .nearby .iconfont {
     transform: scale(1.6) translateY(-8px);
     margin: 0px 12px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
   }
 
-  .tabbar .nearby1 .iconfont {
+  .dock .nearby1 .iconfont {
     transform: scale(1.2) translateY(-6px);
     margin: 0px 9px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
   }
 
-  .tabbar .nearby2 .iconfont {
+  .dock .nearby2 .iconfont {
     transform: scale(1.1) translateY(-5px);
     margin: 0px 7px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
@@ -428,7 +554,6 @@
 
   .desktop-app {
     position: absolute;
-    left: 0;
     right: 0;
     top: 0;
     bottom: 0;
@@ -437,10 +562,11 @@
     justify-content: flex-start;
     align-items: flex-end;
     padding: 20px;
+    flex-wrap: wrap-reverse;
   }
 
   .app-item {
-    margin: 5px;
+    margin: 5px 10px;
     padding: 5px;
     flex-direction: column;
     text-align: center;

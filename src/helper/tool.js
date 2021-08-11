@@ -1,7 +1,7 @@
 /*
  * @Author: admin@hamm.cn
  * @Date: 2021-08-03 21:38:43
- * @LastEditTime: 2021-08-10 20:33:41
+ * @LastEditTime: 2021-08-11 20:25:54
  * @LastEditors: admin@hamm.cn
  * @FilePath: /MacOS/src/helper/tool.js
  * Written by https://hamm.cn
@@ -18,11 +18,11 @@ export default {
     saveAccessToken(access_token) {
         localStorage.setItem('AcessToken', access_token)
     },
-    getTabApp() {
-        let json = localStorage.getItem('tab_app') || '[]'
+    getDockAppList() {
+        let json = localStorage.getItem('dock_app') || '[]'
         let arr = JSON.parse(json)
         if (arr.length == 0) {
-            return AppModel.getAllAppList()
+            return AppModel.getDockAppList()
         }
         return arr
     },

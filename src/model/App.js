@@ -2,15 +2,31 @@
  * @FilePath: /MacOS/src/model/App.js
  * @Author: admin@hamm.cn
  * @Date: 2021-08-09 20:51:06
- * @LastEditTime: 2021-08-10 22:27:04
+ * @LastEditTime: 2021-08-11 22:19:23
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
  */
 
 export default {
+    /**
+     * @description: 获取常驻Dock的App列表
+     */
+    getDockAppList() {
+        let arr = []
+        let appList = this.getAllAppList()
+        for (let app of appList) {
+            if (app.keepInDock) {
+                arr.push(app)
+            }
+        }
+        return arr
+    },
+    /**
+     * @description: 获取指定key的App
+     */
     getAppByKey(key) {
-        let appList = this.getAllAppList();
+        let appList = this.getAllAppList()
         for (let app of appList) {
             if (app.key == key) {
                 return app
@@ -18,6 +34,9 @@ export default {
         }
         return false
     },
+    /**
+     * @description: 所有App列表
+     */
     getAllAppList() {
         return [
             {
@@ -31,6 +50,8 @@ export default {
                 "disableResize": true,
                 "tabbarBgColor": "#333",
                 "tabbarTextColor": "#fff",
+                "hideInDesktop": true,
+                "hideWhenClose": true
             },
             {
                 "key": "app_list",
@@ -38,6 +59,21 @@ export default {
                 "title": "应用中心",
                 "iconColor": "#fff",
                 "iconBgColor": "#db5048",
+                "keepInDock": true,
+            },
+            {
+                "key": "system_setting",
+                "icon": "icon-shezhi",
+                "title": "系统设置",
+                "iconColor": "#fff",
+                "iconBgColor": "#23282d",
+                "width": 600,
+                "height": 400,
+                "disableResize": true,
+                "tabbarBgColor": "#333",
+                "tabbarTextColor": "#fff",
+                "hideInDesktop": true,
+                "keepInDock": true,
             },
             {
                 "key": "user_list",
