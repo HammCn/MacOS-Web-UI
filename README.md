@@ -20,12 +20,7 @@ Vue3 / Element-UI
 
 ### 开发计划
 
-- [ ] 系统设置
-- [ ] 应用菜单管理
-- [ ] 窗口部分API
-- [ ] 用户管理
-- [ ] AppStore
-- [ ] ......
+请移步Issues: [https://gitee.com/hamm/mac-ui/issues](https://gitee.com/hamm/mac-ui/issues)
 
 ### 版权说明
 
