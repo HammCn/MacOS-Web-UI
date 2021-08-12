@@ -12,7 +12,7 @@
 
 ### 体验地址
 
-<a href="https://hamm.cn" target="_blank">https://hamm.cn</a>
+点击查看我们的在线DEMO: <a href="https://hamm.cn" target="_blank">https://hamm.cn</a>
 
 ### 依赖项目
 
