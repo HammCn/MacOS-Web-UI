@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/AppLoader.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-06 21:34:04
- * @LastEditTime: 2021-08-13 23:07:50
+ * @LastEditTime: 2021-08-14 00:00:19
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -11,7 +11,7 @@
 
 <template>
     <div class="moveBg" @mousemove="mouseMove" @mouseup="mouseUp" @mouseleave.stop="mouseLeave"
-        :style="{pointerEvents:isBoxResizing||isBoxMoving?'auto':'none',zIndex:app.isTop?98:88}">
+        :style="{pointerEvents:isBoxResizing||isBoxMoving?'auto':'none',zIndex:isFullScreen?999:(app.isTop?98:88)}">
         <div class="box"
             :style="{left:nowRect.left+'px',top:nowRect.top+'px',bottom:nowRect.bottom+'px',right:nowRect.right+'px',zIndex:app.isTop?98:88}"
             :class="getExtBoxClasses()">
@@ -410,14 +410,15 @@
     .isMaxShowing {
         left: -5px !important;
         right: -5px !important;
-        top: -5px !important;
-        bottom: 47px !important;
+        top: 23px !important;
+        bottom: 46px !important;
     }
 
     .isFullScreen {
         position: fixed !important;
         z-index: 999 !important;
         bottom: -5px !important;
+        top: -5px !important;
     }
 
     .isMaxShowing .box-center-center,
