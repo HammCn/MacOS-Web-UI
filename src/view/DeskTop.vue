@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/DeskTop.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-11 22:44:32
+ * @LastEditTime: 2021-08-13 21:10:14
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -67,7 +67,7 @@
       <div class="desktop-app">
         <template v-for="item in deskTopAppList" :key="item.key">
           <div class="app-item" @click="openApp(item)" v-if="!item.hideInDesktop">
-            <div class="icon" :style="{backgroundColor:item.iconBgColor,color:item.iconColor}"><i class="iconfont"
+            <div class="icon"><i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont"
                 :class="item.icon"></i></div>
             <div class="title">{{item.title}}</div>
           </div>
@@ -75,7 +75,7 @@
       </div>
       <transition-group name="fade-window">
         <template v-for="item in openAppList" :key="item.key">
-          <AppLoader :app="item" @open="openApp" @close="closeApp" @hide="hideApp" v-show="!item.hide"></AppLoader>
+          <AppLoader :app="item" @open="openApp" @close="closeApp" @hide="hideApp" v-show="!item.hide">123</AppLoader>
         </template>
       </transition-group>
     </div>
@@ -191,14 +191,10 @@
           this.timeString = tool.formatTime(new Date(), 'MM-dd HH:mm')
         }, 1000)
       },
-      hideApp(app) {
-        for (let item of this.openAppList) {
-          item.isTop = false
-          if (item.key == app.key) {
-            item.isTop = false
-            item.hide = true
-          }
-        }
+      /**
+       * @description: 打开上一次的应用
+       */
+      openTheLastApp() {
         //给关闭动画一点时间
         setTimeout(() => {
           for (let i = this.openAppList.length - 1; i >= 0; i--) {
@@ -209,14 +205,26 @@
           }
         }, 500)
       },
-      closeApp(app) {
-        if (app.hideWhenClose) {
-          for (let i in this.openAppList) {
-            if (this.openAppList[i].key == app.key) {
-              this.openAppList[i].hide = true
-              break
-            }
+      /**
+       * @description: 最小化应用
+       */
+      hideApp(app) {
+        // console.warn('hideApp')
+        for (let i in this.openAppList) {
+          if (this.openAppList[i].key == app.key) {
+            this.openAppList[i].hide = true
+            this.openTheLastApp()
+            break
           }
+        }
+      },
+      /**
+       * @description: 关闭应用
+       */
+      closeApp(app) {
+        console.warn('closeApp')
+        if (app.hideWhenClose) {
+          this.hideApp(app)
         } else {
           for (let i in this.openAppList) {
             if (this.openAppList[i].key == app.key) {
@@ -224,31 +232,21 @@
               break
             }
           }
-          //给关闭动画一点时间
-          setTimeout(() => {
-            for (let i = this.openAppList.length - 1; i >= 0; i--) {
-              if (!this.openAppList[i].hide) {
-                this.openAppList[i].isTop = true
-                this.app = this.openAppList[i]
-              }
-            }
-          }, 500)
+          this.openTheLastApp()
         }
       },
+      /**
+       * @description: 打开应用
+       */
       openApp(app) {
+        // console.warn('openApp')
         this.app = app
+        let isExist = false
         for (let i in this.openAppList) {
+          this.openAppList[i].isTop = false
           if (this.openAppList[i].key == app.key) {
             this.openAppList[i].hide = false
             this.openAppList[i].isTop = true
-            break
-          }
-        }
-        let isExist = false
-        for (let item of this.openAppList) {
-          item.isTop = false
-          if (item.key == app.key) {
-            item.isTop = true
             isExist = true
           }
         }
@@ -257,6 +255,9 @@
           this.openAppList.push(app)
         }
       },
+      /**
+       * @description: APP是否常驻Dock
+       */
       isAppInKeepList(app) {
         for (let item of this.dockAppList) {
           if (item.key == app.key) {
@@ -265,6 +266,9 @@
         }
         return false;
       },
+      /**
+       * @description: APP是否打开
+       */
       isAppInOpenList(app) {
         for (let item of this.openAppList) {
           if (item.key == app.key) {
@@ -273,16 +277,25 @@
         }
         return false;
       },
+      /**
+       * @description: 根据key打开APP
+       */
       openAppByKey(key) {
         let app = AppModel.getAppByKey(key)
         if (app) {
           this.openApp(app)
         }
       },
+      /**
+       * @description: 初始化加载APP
+       */
       loadApp() {
         this.dockAppList = tool.getDockAppList()
         this.deskTopAppList = tool.getDeskTopApp()
       },
+      /**
+       * @description: DOCK鼠标事件
+       */
       dockMouseOver(e) {
         let dom = e.target;
         let prev = dom
@@ -302,6 +315,9 @@
           }
         }
       },
+      /**
+       * @description: DOCK鼠标事件
+       */
       dockMouseOut(e) {
         let dom = e.target;
         let prev = dom
@@ -567,31 +583,34 @@
 
   .app-item {
     margin: 5px 10px;
-    padding: 5px;
+    padding: 10px 5px;
     flex-direction: column;
     text-align: center;
     text-shadow: 0px 0px 2px rgb(0 0 0 / 50%);
     cursor: pointer;
     border-radius: 10px;
     border: 2px solid transparent;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
   }
 
   .app-item .icon {
     border-radius: 10px;
-    width: 50px;
-    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
   }
 
   .app-item .iconfont {
     font-size: 36px;
+    border-radius: 10px;
+    padding: 10px;
   }
 
   .app-item .title {
     font-size: 12px;
-    width: 50px;
     margin-top: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;

@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/Loading.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-05 21:00:27
- * @LastEditTime: 2021-08-11 22:43:15
+ * @LastEditTime: 2021-08-13 21:38:54
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 开机进度条页面
@@ -71,7 +71,7 @@
             setTimeout(() => {
                 this.showProgress = true;
                 this.updateProgress()
-            }, 3000)
+            }, 1000)
         },
         methods: {
             fullScreen() {
@@ -96,7 +96,7 @@
                     this.showProgress = false
                     setTimeout(() => this.$emit('loaded'), 1000)
                 } else {
-                    setTimeout(() => this.updateProgress(), 200)
+                    setTimeout(() => this.updateProgress(), 100)
                 }
             }
         }

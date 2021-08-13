@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/AppLoader.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-06 21:34:04
- * @LastEditTime: 2021-08-11 22:46:00
+ * @LastEditTime: 2021-08-13 21:33:05
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -22,7 +22,7 @@
             </div>
             <div class="box-center">
                 <div class="box-center-left" @mousedown="resizeMouseDown"></div>
-                <div class="box-center-center loader" @click="showThisApp">
+                <div class="box-center-center loader" @mousedown.stop="showThisApp">
                     <div class="app-bar" :style="{backgroundColor:app.tabbarBgColor}"
                         @mousedown.stop="positionMouseDown" v-on:dblclick="appBarDoubleClicked">
                         <div class="controll">
@@ -36,6 +36,24 @@
                     <div class="app-body">
                         <template v-if="app.key=='system_about'">
                             <SystemAbout @api="appEvent"></SystemAbout>
+                        </template>
+                        <template v-if="app.key=='demo_demo'">
+                            <Demo @api="appEvent"></Demo>
+                        </template>
+                        <template v-if="app.key=='demo_dock'">
+                            <DemoDock @api="appEvent"></DemoDock>
+                        </template>
+                        <template v-if="app.key=='demo_unresize'">
+                            <DemoUnResize @api="appEvent"></DemoUnResize>
+                        </template>
+                        <template v-if="app.key=='demo_unclose'">
+                            <DemoUnClose @api="appEvent"></DemoUnClose>
+                        </template>
+                        <template v-if="app.key=='demo_hidedesktop'">
+                            <DemoHideDesktop @api="appEvent"></DemoHideDesktop>
+                        </template>
+                        <template v-if="app.key=='demo_colorfull'">
+                            <DemoColorFull @api="appEvent"></DemoColorFull>
                         </template>
                     </div>
                 </div>
@@ -55,7 +73,13 @@
     import { defineAsyncComponent } from 'vue'
     export default {
         components: {
-            SystemAbout: defineAsyncComponent(() => import('@/view/system/about'))
+            SystemAbout: defineAsyncComponent(() => import('@/view/system/about')),
+            Demo: defineAsyncComponent(() => import('@/view/demo/demo')),
+            DemoDock: defineAsyncComponent(() => import('@/view/demo/dock')),
+            DemoUnResize: defineAsyncComponent(() => import('@/view/demo/unresize')),
+            DemoUnClose: defineAsyncComponent(() => import('@/view/demo/unclose')),
+            DemoHideDesktop: defineAsyncComponent(() => import('@/view/demo/hidedesktop')),
+            DemoColorFull: defineAsyncComponent(() => import('@/view/demo/colorfull')),
         },
         props: {
             app: Object,
@@ -88,23 +112,74 @@
                 this.nowRect.left = this.nowRect.right = (document.body.clientWidth - this.app.width) / 2
             }
             if (this.app.height) {
-                this.nowRect.bottom = (document.body.clientHeight - this.app.height) / 2 + 50
-                this.nowRect.top = (document.body.clientHeight - this.app.height) / 2 - 50
+                this.nowRect.bottom = (document.body.clientHeight - this.app.height) / 2
+                this.nowRect.top = (document.body.clientHeight - this.app.height) / 2
             }
         },
         methods: {
+            /**
+             * @description: 监听APP发送的事件 转发或处理到桌面组件中
+             */
             appEvent(e) {
                 console.log(e)
+                switch (e.event) {
+                    case 'windowMaxSize':
+                        if (this.app.disableResize) {
+                            return
+                        }
+                        this.isMaxShowing = true
+                        this.isFullScreen = false
+                        break;
+                    case 'windowNormalSize':
+                        if (this.app.disableResize) {
+                            return
+                        }
+                        this.isMaxShowing = false
+                        this.isFullScreen = false
+                        break;
+                    case 'windowFullSize':
+                        if (this.app.disableResize) {
+                            return
+                        }
+                        this.isFullScreen = true
+                        this.isMaxShowing = true
+                        break;
+                    case 'windowMinSize':
+                        this.hide()
+                        break;
+                    case 'windowClose':
+                        this.close()
+                        break;
+                    case 'openApp':
+                        this.$emit('open', AppModel.getAppByKey(e.app))
+                        break;
+                    case 'closeApp':
+                        this.$emit('close', AppModel.getAppByKey(e.app))
+                        break;
+                    case 'setWindowTitle':
+                        this.appData.title = e.title || this.app.title
+                        break;
+                    default:
+                }
             },
+            /**
+             * @description: 关闭当前应用
+             */
             close() {
                 this.$emit('close', this.app)
             },
+            /**
+             * @description: 隐藏当前应用
+             */
             hide() {
                 this.$emit('hide', this.app)
             },
             showThisApp() {
                 this.$emit('open', this.app)
             },
+            /**
+             * @description: 全屏切换
+             */
             switchFullScreen() {
                 if (this.app.disableResize) {
                     return
@@ -116,6 +191,9 @@
                     this.isMaxShowing = false
                 }
             },
+            /**
+             * @description: 返回应用配置的样式类
+             */
             getExtBoxClasses() {
                 let str = "";
                 if (!this.isBoxResizing && !this.isBoxMoving) {
@@ -135,6 +213,9 @@
                 }
                 return str
             },
+            /**
+             * @description: 标题栏被双击 缩放
+             */
             appBarDoubleClicked() {
                 if (this.app.disableResize) {
                     return
@@ -144,7 +225,11 @@
                     this.isFullScreen = false
                 }
             },
+            /**
+             * @description: 鼠标按下
+             */
             positionMouseDown(e) {
+                // console.warn("positionMouseDown")
                 this.showThisApp()
                 if (this.isFullScreen || this.isMaxShowing) {
                     return
