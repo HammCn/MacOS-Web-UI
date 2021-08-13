@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/AppLoader.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-06 21:34:04
- * @LastEditTime: 2021-08-13 21:33:05
+ * @LastEditTime: 2021-08-13 23:07:50
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -11,7 +11,7 @@
 
 <template>
     <div class="moveBg" @mousemove="mouseMove" @mouseup="mouseUp" @mouseleave.stop="mouseLeave"
-        :style="{pointerEvents:isBoxResizing||isBoxMoving?'auto':'none'}">
+        :style="{pointerEvents:isBoxResizing||isBoxMoving?'auto':'none',zIndex:app.isTop?98:88}">
         <div class="box"
             :style="{left:nowRect.left+'px',top:nowRect.top+'px',bottom:nowRect.bottom+'px',right:nowRect.right+'px',zIndex:app.isTop?98:88}"
             :class="getExtBoxClasses()">
@@ -121,7 +121,7 @@
              * @description: 监听APP发送的事件 转发或处理到桌面组件中
              */
             appEvent(e) {
-                console.log(e)
+                // console.log(e)
                 switch (e.event) {
                     case 'windowMaxSize':
                         if (this.app.disableResize) {
@@ -325,7 +325,7 @@
 </script>
 <style scoped>
     .moveBg {
-        position: absolute;
+        position: fixed;
         left: 0;
         right: 0;
         top: 0;

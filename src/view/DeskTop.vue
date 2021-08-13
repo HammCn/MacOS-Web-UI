@@ -2,7 +2,7 @@
  * @FilePath: /MacOS/src/view/DeskTop.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-13 21:10:14
+ * @LastEditTime: 2021-08-13 22:58:24
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -222,7 +222,7 @@
        * @description: 关闭应用
        */
       closeApp(app) {
-        console.warn('closeApp')
+        // console.warn('closeApp')
         if (app.hideWhenClose) {
           this.hideApp(app)
         } else {
