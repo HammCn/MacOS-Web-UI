@@ -55,6 +55,9 @@
                         <template v-if="app.key=='demo_colorfull'">
                             <DemoColorFull @api="appEvent"></DemoColorFull>
                         </template>
+                        <template v-if="app.key=='demo_camera'">
+                            <DemoCamera @api="appEvent"></DemoCamera>
+                        </template>
                     </div>
                 </div>
                 <div class="box-center-right" @mousedown="resizeMouseDown"></div>
@@ -80,6 +83,7 @@
             DemoUnClose: defineAsyncComponent(() => import('@/view/demo/unclose')),
             DemoHideDesktop: defineAsyncComponent(() => import('@/view/demo/hidedesktop')),
             DemoColorFull: defineAsyncComponent(() => import('@/view/demo/colorfull')),
+            DemoCamera: defineAsyncComponent(() => import('@/view/demo/camera')),
         },
         props: {
             app: Object,
