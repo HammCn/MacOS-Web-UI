@@ -113,7 +113,17 @@ export default {
                 "height": 400,
                 "tabbarBgColor": "#ff4500",
                 "tabbarTextColor": "#fff",
-            }
+            },
+            {
+                "key": "demo_camera",
+                "icon": "icon-camera1",
+                "title": "Photo Booth",
+                "iconColor": "#fff",
+                "iconBgColor": "#E24637",
+                "width": 540,
+                "height": 540,
+                "disableResize": true,
+            },
         ]
     }
 }
