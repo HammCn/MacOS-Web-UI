@@ -34,7 +34,8 @@
                         <div class="title" :style="{color:app.titleColor}">{{appData.title||app.title}}</div>
                     </div>
                     <div class="app-body">
-                        <component :is="app.component" @api="appEvent" :app="app"></component>
+                        <component :is="app.component" @api="appEvent" :app="app" :openAppList="openAppList">
+                        </component>
                     </div>
                 </div>
                 <div class="box-center-right" @mousedown="resizeMouseDown"></div>
@@ -54,6 +55,7 @@
     export default {
         components: {
             SystemAbout: defineAsyncComponent(() => import('@/view/system/about')),
+            SystemTask: defineAsyncComponent(() => import('@/view/system/task')),
             Demo: defineAsyncComponent(() => import('@/view/demo/demo')),
             DemoDock: defineAsyncComponent(() => import('@/view/demo/dock')),
             DemoUnResize: defineAsyncComponent(() => import('@/view/demo/unresize')),
@@ -65,6 +67,7 @@
         },
         props: {
             app: Object,
+            openAppList: Array
         },
         data() {
             return {
@@ -143,7 +146,12 @@
                         }
                         break;
                     case 'closeApp':
-                        this.$emit('close', AppModel.getAppByKey(e.app))
+                        if (e.pid) {
+                            this.$emit('closeWithPid', e.pid)
+                        }
+                        if (e.app) {
+                            this.$emit('close', AppModel.getAppByKey(e.app))
+                        }
                         break;
                     case 'setWindowTitle':
                         this.appData.title = e.title || this.app.title

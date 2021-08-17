@@ -1,16 +1,16 @@
 <!--
- * @FilePath: /MacOS/src/App.vue
+ * @FilePath: /mac-ui/src/App.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-13 23:08:29
+ * @LastEditTime: 2021-08-17 23:26:23
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
 -->
 <template>
-  <div class="app">
+  <div class="app" @mousedown.self="boot">
     <transition name="fade">
-      <Bg></Bg>
+      <Bg v-if="isBg"></Bg>
     </transition>
     <transition name="fade">
       <Loading v-if="isLoading" @loaded="loaded"></Loading>
@@ -19,13 +19,19 @@
       <Login v-if="isLogin" @logined="logined"></Login>
     </transition>
     <transition name="fade">
-      <DeskTop v-if="isDeskTop"></DeskTop>
+      <DeskTop v-if="isDeskTop" @lockScreen="lockScreen" @shutdown="shutdown" @logout="logout"></DeskTop>
     </transition>
   </div>
 </template>
 
 <style scoped>
-
+  .app {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
 </style>
 <script>
   import Bg from "@/components/Bg"
@@ -41,21 +47,43 @@
     },
     data() {
       return {
+        isBg: false,
         isLoading: false,
         isLogin: false,
-        isDeskTop: true,
+        isDeskTop: false,
       }
     },
-    created() { },
+    created() {
+      this.boot()
+    },
     methods: {
+      boot() {
+        this.isLoading = true
+      },
       loaded() {
         this.isLoading = false
+        this.isBg = true
         this.isLogin = true
       },
       logined() {
         console.log("login success")
         this.isLogin = false
         this.isDeskTop = true
+      },
+      lockScreen() {
+        this.isLogin = true
+      },
+      logout() {
+        localStorage.removeItem("user_name")
+        this.isDeskTop = false
+        this.isLogin = true
+      },
+      shutdown() {
+        localStorage.removeItem("user_name")
+        this.isDeskTop = false
+        this.isLogin = false
+        this.isLoading = false
+        this.isBg = false
       }
     }
   }

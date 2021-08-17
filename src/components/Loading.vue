@@ -1,8 +1,8 @@
 <!--
- * @FilePath: /MacOS/src/view/Loading.vue
+ * @FilePath: /mac-ui/src/components/Loading.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-05 21:00:27
- * @LastEditTime: 2021-08-13 21:38:54
+ * @LastEditTime: 2021-08-17 23:14:24
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 开机进度条页面
@@ -32,7 +32,7 @@
         align-items: center;
         color: white;
         margin-top: -100px;
-        z-index: 99;
+        z-index: 99999;
     }
 
     .logo .iconfont {

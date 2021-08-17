@@ -1,12 +1,13 @@
 <!--
- * @FilePath: /MacOS/src/view/DeskTop.vue
+ * @FilePath: /mac-ui/src/components/DeskTop.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-13 22:58:24
+ * @LastEditTime: 2021-08-17 23:25:38
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
 -->
+
 <template>
   <div class="desktop">
     <div class="top">
@@ -21,22 +22,18 @@
             <el-dropdown-item @click="openAppByKey('system_setting')">
               <div>系统偏好设置</div>
             </el-dropdown-item>
-            <el-dropdown-item>
+            <el-dropdown-item @click="openAppByKey('system_task')">
               <div>强制退出...</div>
             </el-dropdown-item>
-            <el-dropdown-item class="line"></el-dropdown-item>
-            <el-dropdown-item>
+            <el-dropdown-item @click="lockScreen">
               <div>锁定屏幕</div>
             </el-dropdown-item>
-            <el-dropdown-item>
-              <div>重新启动...</div>
-            </el-dropdown-item>
             <el-dropdown-item class="line"></el-dropdown-item>
-            <el-dropdown-item>
+            <el-dropdown-item @click="shutdown">
               <div>关机...</div>
             </el-dropdown-item>
-            <el-dropdown-item>
-              <div>退出登录 Hamm...</div>
+            <el-dropdown-item @click="logout">
+              <div>退出登录 {{userName}}...</div>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -75,8 +72,8 @@
       </div>
       <transition-group name="fade-window">
         <template v-for="item in openAppList" :key="item.key">
-          <AppLoader :app="item" @open="openApp" @openWithData="openAppWithData" @close="closeApp" @hide="hideApp"
-            @show="showApp" v-show="!item.hide">
+          <AppLoader :app="item" :openAppList="openAppList" @open="openApp" @openWithData="openAppWithData"
+            @close="closeApp" @closeWithPid="closeWithPid" @hide="hideApp" @show="showApp" v-show="!item.hide">
             123</AppLoader>
         </template>
       </transition-group>
@@ -84,35 +81,6 @@
     <div class="footer">
       <div class="space"></div>
       <div class="dock">
-        <!-- 
-        <div class="item"><i style="background-color:#939391" class="iconfont icon-shezhi"></i></div>
-        <div class="item"><i style="background-color:#257eef" class="iconfont icon-youjian"></i></div>
-        <div class="item"><i style="background-color: #27abed;" class="iconfont icon-shangpu"></i></div>
-        <div class="item"><i style="background-color: #2197d8;" class="iconfont icon-BugReport"></i></div>
-        <div class="item"><i style="background-color: #262626;" class="iconfont icon-naozhong"></i></div>
-        <div class="item"><i style="background-color: #d8d8d8;color: #298ae9;" class="iconfont icon-zhinanzhen"></i>
-        </div>
-        <div class="item"><i style="background-color: #c5202a;color: #fff;" class="iconfont icon-oschina"></i>
-        </div>
-        <div class="item"><i style="background-color: #24292e;" class="iconfont icon-github"></i></div>
-        <div class="item"><i style="background-color: #ffffff;color:#2b9eed ;" class="iconfont icon-vscode"></i>
-        </div>
-        <div class="item"><i style="background-color: #217bfb;color: white;" class="iconfont icon-alipay"></i>
-        </div>
-        <div class="item"><i style="background-color: #41a4e8" class="iconfont icon-dingtalk"></i></div>
-        <div class="item"><i style="background-color: #db5048" class="iconfont icon-chrome-fill"></i></div>
-        <div class="item"><i style="background-color: #126bfb;color: white;" class="iconfont icon-zhihu"></i>
-        </div>
-        <div class="item"><i style="background-color: #22cd6a" class="iconfont icon-wechat-fill"></i></div>
-        <div class="item"><i style="background-color: #000000;" class="iconfont icon-QQ"></i></div>
-        <div class="item"><i style="background-color: #2cb256;" class="iconfont icon-icon-oschina-circle"></i>
-        </div>
-        <div class="item"><i style="background-color: #338ec3" class="iconfont icon-twitter"></i></div>
-        <div class="item"><i style="background-color: #d42927;" class="iconfont icon-weibo1"></i></div>
-        <div class="item"><i style="background-color: white;color: #fc0d1b;" class="iconfont icon-Youtube-fill"></i>
-        </div>
-        <div class="item"><i style="background-color: #e85349;color: #fff;" class="iconfont icon-google"></i></div> -->
-
         <template v-for="item in dockAppList" :key="item.key">
           <div class="item" @click="openApp(item)" :class="app.key==item.key?'jump':''"
             v-if="isAppInKeepList(item) && !item.multiTask">
@@ -144,6 +112,7 @@
     },
     data() {
       return {
+        userName: "",
         app: false,
         menu: [],
         timeString: "",
@@ -151,43 +120,44 @@
         deskTopAppList: [],
         dockAppList: [],
         deskTopMenu: [
-          {
-            key: "desktop",
-            title: "桌面",
-            sub: [
-              {
-                key: "big_icon",
-                title: "大图标",
-              },
-              {
-                key: "big_icon",
-                title: "小图标",
-              },
-              {
-                isLine: true
-              },
-              {
-                key: "align_left",
-                title: "左侧排列",
-              },
-              {
-                key: "align_right",
-                title: "右侧排列",
-              },
-              {
-                isLine: true
-              },
-              {
-                key: "wall",
-                title: "更换壁纸...",
-              }
-            ]
-          }
+          // {
+          //   key: "desktop",
+          //   title: "桌面",
+          //   sub: [
+          //     {
+          //       key: "big_icon",
+          //       title: "大图标",
+          //     },
+          //     {
+          //       key: "big_icon",
+          //       title: "小图标",
+          //     },
+          //     {
+          //       isLine: true
+          //     },
+          //     {
+          //       key: "align_left",
+          //       title: "左侧排列",
+          //     },
+          //     {
+          //       key: "align_right",
+          //       title: "右侧排列",
+          //     },
+          //     {
+          //       isLine: true
+          //     },
+          //     {
+          //       key: "wall",
+          //       title: "更换壁纸...",
+          //     }
+          //   ]
+          // }
         ]
       }
     },
     created() {
       this.menu = this.deskTopMenu
+      this.userName = localStorage.getItem('user_name') || ''
       this.loadApp()
       this.startTimer()
     },
@@ -222,6 +192,17 @@
           }
         }
         this.openTheLastApp()
+      },
+      /**
+       * @description: 根据PID关闭应用
+       */
+      closeWithPid(pid) {
+        for (let i in this.openAppList) {
+          if (this.openAppList[i].pid == pid) {
+            this.openAppList.splice(i, 1)
+            break
+          }
+        }
       },
       /**
        * @description: 关闭应用
@@ -326,6 +307,24 @@
         if (app) {
           this.openApp(app)
         }
+      },
+      /**
+       * @description: 锁定屏幕
+       */
+      lockScreen() {
+        this.$emit('lockScreen')
+      },
+      /**
+       * @description: 关机
+       */
+      shutdown() {
+        this.$emit('shutdown')
+      },
+      /**
+       * @description: 注销登录
+       */
+      logout() {
+        this.$emit('logout')
       },
       /**
        * @description: 初始化加载APP

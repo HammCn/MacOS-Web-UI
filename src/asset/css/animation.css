@@ -111,3 +111,15 @@
         top: -66px;
     }
 }
+
+@keyframes loginErrorAnimation {
+    0% {
+        margin-left: -30px;
+    }
+    50% {
+        margin-left: 30px;
+    }
+    100% {
+        margin-left: 0;
+    }
+}
