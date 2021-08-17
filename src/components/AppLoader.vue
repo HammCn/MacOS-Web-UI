@@ -23,41 +23,18 @@
             <div class="box-center">
                 <div class="box-center-left" @mousedown="resizeMouseDown"></div>
                 <div class="box-center-center loader" @mousedown.stop="showThisApp">
-                    <div class="app-bar" :style="{backgroundColor:app.tabbarBgColor}"
-                        @mousedown.stop="positionMouseDown" v-on:dblclick="appBarDoubleClicked">
+                    <div class="app-bar" :style="{backgroundColor:app.titleBgColor}" @mousedown.stop="positionMouseDown"
+                        v-on:dblclick="appBarDoubleClicked">
                         <div class="controll">
                             <div class="close" @click.stop="close"></div>
                             <div class="min" @click.stop="hide"></div>
                             <div class="full" :class="app.disableResize?'full-disabled':''" @click="switchFullScreen">
                             </div>
                         </div>
-                        <div class="title" :style="{color:app.tabbarTextColor}">{{appData.title||app.title}}</div>
+                        <div class="title" :style="{color:app.titleColor}">{{appData.title||app.title}}</div>
                     </div>
                     <div class="app-body">
-                        <template v-if="app.key=='system_about'">
-                            <SystemAbout @api="appEvent"></SystemAbout>
-                        </template>
-                        <template v-if="app.key=='demo_demo'">
-                            <Demo @api="appEvent"></Demo>
-                        </template>
-                        <template v-if="app.key=='demo_dock'">
-                            <DemoDock @api="appEvent"></DemoDock>
-                        </template>
-                        <template v-if="app.key=='demo_unresize'">
-                            <DemoUnResize @api="appEvent"></DemoUnResize>
-                        </template>
-                        <template v-if="app.key=='demo_unclose'">
-                            <DemoUnClose @api="appEvent"></DemoUnClose>
-                        </template>
-                        <template v-if="app.key=='demo_hidedesktop'">
-                            <DemoHideDesktop @api="appEvent"></DemoHideDesktop>
-                        </template>
-                        <template v-if="app.key=='demo_colorfull'">
-                            <DemoColorFull @api="appEvent"></DemoColorFull>
-                        </template>
-                        <template v-if="app.key=='demo_camera'">
-                            <DemoCamera @api="appEvent"></DemoCamera>
-                        </template>
+                        <component :is="app.component" @api="appEvent" :app="app"></component>
                     </div>
                 </div>
                 <div class="box-center-right" @mousedown="resizeMouseDown"></div>
@@ -84,6 +61,7 @@
             DemoHideDesktop: defineAsyncComponent(() => import('@/view/demo/hidedesktop')),
             DemoColorFull: defineAsyncComponent(() => import('@/view/demo/colorfull')),
             DemoCamera: defineAsyncComponent(() => import('@/view/demo/camera')),
+            DemoMultiTask: defineAsyncComponent(() => import('@/view/demo/multitask')),
         },
         props: {
             app: Object,
@@ -155,7 +133,14 @@
                         this.close()
                         break;
                     case 'openApp':
-                        this.$emit('open', AppModel.getAppByKey(e.app))
+                        if (e.data) {
+                            this.$emit('openWithData', {
+                                app: AppModel.getAppByKey(e.app),
+                                data: e.data
+                            })
+                        } else {
+                            this.$emit('open', AppModel.getAppByKey(e.app))
+                        }
                         break;
                     case 'closeApp':
                         this.$emit('close', AppModel.getAppByKey(e.app))
@@ -179,7 +164,7 @@
                 this.$emit('hide', this.app)
             },
             showThisApp() {
-                this.$emit('open', this.app)
+                this.$emit('show', this.app)
             },
             /**
              * @description: 全屏切换

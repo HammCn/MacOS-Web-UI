@@ -88,3 +88,26 @@
         opacity: 0;
     }
 }
+
+@keyframes jumpAnimation {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    0% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes dockTitleAnimation {
+    0% {
+        opacity: 0;
+        top: 0;
+    }
+    100% {
+        opacity: 1;
+        top: -66px;
+    }
+}

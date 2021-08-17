@@ -1,16 +1,6 @@
-<!--
- * @FilePath: /MacOS/src/view/demo/unclose.vue
- * @Author: admin@hamm.cn
- * @Date: 2021-08-13 21:00:36
- * @LastEditTime: 2021-08-13 21:35:07
- * @LastEditors: admin@hamm.cn
- * Written by https://hamm.cn
- * @Description: 常驻Dock的App
--->
-
 <template>
     <div class="demo">
-        <div class="title">我无法被彻底关闭，只会被隐藏，<br>因为我 hideWhenClose = true , <br>你猜我适合做什么应用？</div>
+        <div class="title">我允许被多次打开，但我无法被固定在Dock上，<br>因为我的 keepInDock 在 <br>multiTask = true 时将自动失效</div>
     </div>
 </template>
 

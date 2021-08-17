@@ -98,7 +98,6 @@ function request(data, object = {}) {
                 headers: header
             })
     }
-    console.log(data)
     result.then((response) => {
         switch (response.data.code) {
             case HTTP_STATUS_CODE.OK:

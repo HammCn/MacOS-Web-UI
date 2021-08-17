@@ -66,7 +66,7 @@
     <div class="body">
       <div class="desktop-app">
         <template v-for="item in deskTopAppList" :key="item.key">
-          <div class="app-item" @click="openApp(item)" v-if="!item.hideInDesktop">
+          <div class="app-item" v-on:dblclick="openApp(item)" v-if="!item.hideInDesktop">
             <div class="icon"><i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont"
                 :class="item.icon"></i></div>
             <div class="title">{{item.title}}</div>
@@ -75,7 +75,9 @@
       </div>
       <transition-group name="fade-window">
         <template v-for="item in openAppList" :key="item.key">
-          <AppLoader :app="item" @open="openApp" @close="closeApp" @hide="hideApp" v-show="!item.hide">123</AppLoader>
+          <AppLoader :app="item" @open="openApp" @openWithData="openAppWithData" @close="closeApp" @hide="hideApp"
+            @show="showApp" v-show="!item.hide">
+            123</AppLoader>
         </template>
       </transition-group>
     </div>
@@ -112,15 +114,19 @@
         <div class="item"><i style="background-color: #e85349;color: #fff;" class="iconfont icon-google"></i></div> -->
 
         <template v-for="item in dockAppList" :key="item.key">
-          <div class="item" @click="openApp(item)" :class="app.key==item.key?'jump':''" v-if="isAppInKeepList(item)">
+          <div class="item" @click="openApp(item)" :class="app.key==item.key?'jump':''"
+            v-if="isAppInKeepList(item) && !item.multiTask">
             <i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont" :class="item.icon"></i>
             <div class="dot" v-if="isAppInOpenList(item)"></div>
+            <div class="title">{{item.title}}</div>
           </div>
         </template>
         <template v-for="item in openAppList" :key="item.key">
-          <div class="item" @click="openApp(item)" v-if="!isAppInKeepList(item)" :class="app.key==item.key?'jump':''">
+          <div class="item" @click="showApp(item)" v-if="!isAppInKeepList(item) || item.multiTask"
+            :class="app.id==item.id?'jump':''">
             <i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont" :class="item.icon"></i>
             <div class="dot" v-if="isAppInOpenList(item)"></div>
+            <div class="title">{{item.title}}</div>
           </div>
         </template>
       </div>
@@ -130,7 +136,7 @@
 </template>
 <script>
   import AppModel from "@/model/App"
-  import AppLoader from "@/view/AppLoader"
+  import AppLoader from "@/components/AppLoader"
   import tool from "@/helper/tool"
   export default {
     components: {
@@ -195,15 +201,14 @@
        * @description: 打开上一次的应用
        */
       openTheLastApp() {
-        //给关闭动画一点时间
-        setTimeout(() => {
-          for (let i = this.openAppList.length - 1; i >= 0; i--) {
-            if (!this.openAppList[i].hide) {
-              this.openAppList[i].isTop = true
-              this.app = this.openAppList[i]
-            }
+        let flag = false
+        for (let i = this.openAppList.length - 1; i >= 0; i--) {
+          if (!this.openAppList[i].hide && !flag) {
+            this.openAppList[i].isTop = true
+            this.app = this.openAppList[i]
+            flag = true
           }
-        }, 500)
+        }
       },
       /**
        * @description: 最小化应用
@@ -211,12 +216,12 @@
       hideApp(app) {
         // console.warn('hideApp')
         for (let i in this.openAppList) {
-          if (this.openAppList[i].key == app.key) {
+          if (this.openAppList[i].pid == app.pid) {
             this.openAppList[i].hide = true
-            this.openTheLastApp()
             break
           }
         }
+        this.openTheLastApp()
       },
       /**
        * @description: 关闭应用
@@ -227,32 +232,68 @@
           this.hideApp(app)
         } else {
           for (let i in this.openAppList) {
-            if (this.openAppList[i].key == app.key) {
-              this.openAppList.splice(i, 1)
-              break
+            if (app.pid) {
+              if (this.openAppList[i].pid == app.pid) {
+                this.openAppList.splice(i, 1)
+                break
+              }
+            } else {
+              if (this.openAppList[i].key == app.key) {
+                this.openAppList.splice(i, 1)
+                break
+              }
             }
           }
           this.openTheLastApp()
+        }
+      },
+      openAppWithData(e) {
+        if (e.app && e.data) {
+          let app = e.app
+          app.data = e.data
+          this.openApp(app)
         }
       },
       /**
        * @description: 打开应用
        */
       openApp(app) {
-        // console.warn('openApp')
         this.app = app
-        let isExist = false
-        for (let i in this.openAppList) {
-          this.openAppList[i].isTop = false
-          if (this.openAppList[i].key == app.key) {
-            this.openAppList[i].hide = false
-            this.openAppList[i].isTop = true
-            isExist = true
+        if (app.multiTask) {
+          for (let i in this.openAppList) {
+            this.openAppList[i].isTop = false
+          }
+          app.isTop = true
+          app.pid = this.openAppList.length + 1
+          this.openAppList.push(Object.assign({}, app))
+        } else {
+          let isExist = false
+          for (let i in this.openAppList) {
+            this.openAppList[i].isTop = false
+            if (this.openAppList[i].key == app.key) {
+              this.openAppList[i].hide = false
+              this.openAppList[i].isTop = true
+              isExist = true
+            }
+          }
+          if (!isExist) {
+            app.isTop = true
+            app.pid = this.openAppList.length + 1
+            this.openAppList.push(Object.assign({}, app))
           }
         }
-        if (!isExist) {
-          app.isTop = true
-          this.openAppList.push(app)
+      },
+      /**
+       * @description: 显示并置顶APP
+       */
+      showApp(app) {
+        this.app = app
+        for (let i in this.openAppList) {
+          this.openAppList[i].isTop = false
+          if (this.openAppList[i].pid == app.pid) {
+            this.openAppList[i].hide = false
+            this.openAppList[i].isTop = true
+          }
         }
       },
       /**
@@ -293,50 +334,6 @@
         this.dockAppList = tool.getDockAppList()
         this.deskTopAppList = tool.getDeskTopApp()
       },
-      /**
-       * @description: DOCK鼠标事件
-       */
-      dockMouseOver(e) {
-        let dom = e.target;
-        let prev = dom
-        let next = dom
-        for (let _temp = 0; _temp <= 2; _temp++) {
-          try {
-            next = next.nextElementSibling
-            next.className = "item nearby" + (_temp == 0 ? "" : _temp)
-          } catch (e) {
-            //DOM不存在 捕获
-          }
-          try {
-            prev = prev.previousElementSibling
-            prev.className = "item nearby" + (_temp == 0 ? "" : _temp)
-          } catch (e) {
-            //DOM不存在 捕获
-          }
-        }
-      },
-      /**
-       * @description: DOCK鼠标事件
-       */
-      dockMouseOut(e) {
-        let dom = e.target;
-        let prev = dom
-        let next = dom
-        for (let _temp = 0; _temp <= 2; _temp++) {
-          try {
-            next = next.nextElementSibling
-            prev.className = "item"
-          } catch (e) {
-            //DOM不存在 捕获
-          }
-          try {
-            prev = prev.previousElementSibling
-            prev.className = "item"
-          } catch (e) {
-            //DOM不存在 捕获
-          }
-        }
-      }
     }
   }
 </script>
@@ -427,22 +424,26 @@
     animation: jumpAnimation 0.8s ease 1;
   }
 
-  @keyframes jumpAnimation {
-    0% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-20px);
-    }
-
-    0% {
-      transform: translateY(0);
-    }
-  }
 
   .menu .item:hover {
     background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .dock .title {
+    display: none;
+  }
+
+
+  .dock .item:hover .title {
+    position: absolute;
+    display: inherit;
+    word-break: keep-all;
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+    animation: dockTitleAnimation 0.5s ease 1 forwards;
   }
 
   .status {
@@ -582,8 +583,7 @@
   }
 
   .app-item {
-    margin: 5px 10px;
-    padding: 10px 5px;
+    padding: 10px 0px;
     flex-direction: column;
     text-align: center;
     text-shadow: 0px 0px 2px rgb(0 0 0 / 50%);
@@ -604,9 +604,9 @@
   }
 
   .app-item .iconfont {
-    font-size: 36px;
+    font-size: 28px;
     border-radius: 10px;
-    padding: 10px;
+    padding: 8px;
   }
 
   .app-item .title {

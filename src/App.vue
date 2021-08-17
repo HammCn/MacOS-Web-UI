@@ -28,10 +28,10 @@
 
 </style>
 <script>
-  import Bg from "@/view/Bg"
-  import Loading from "@/view/Loading"
-  import Login from "@/view/Login"
-  import DeskTop from "@/view/DeskTop"
+  import Bg from "@/components/Bg"
+  import Loading from "@/components/Loading"
+  import Login from "@/components/Login"
+  import DeskTop from "@/components/DeskTop"
   export default {
     components: {
       Bg,
@@ -41,9 +41,9 @@
     },
     data() {
       return {
-        isLoading: true,
+        isLoading: false,
         isLogin: false,
-        isDeskTop: false,
+        isDeskTop: true,
       }
     },
     created() { },

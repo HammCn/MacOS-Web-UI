@@ -125,7 +125,6 @@
 </style>
 <script>
     export default {
-        name: "demo_camera",
         data() {
             return {
                 canUse: false,

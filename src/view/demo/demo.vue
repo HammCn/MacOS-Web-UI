@@ -26,6 +26,7 @@
             <el-button size="small" type="primary" @click="openApp">打开某app</el-button>
             <el-button size="small" type="primary" @click="closeApp">关闭某app</el-button>
             <el-button size="small" type="primary" @click="setWindowTitle">修改窗口标题</el-button>
+            <el-button size="small" type="primary" @click="openAppWithData">带参打开App</el-button>
         </div>
     </div>
 </template>
@@ -76,7 +77,6 @@
 </style>
 <script>
     export default {
-        name: "system_about",
         data() {
             return {
                 demo: {
@@ -122,13 +122,20 @@
             closeApp() {
                 this.$emit("api", {
                     event: "closeApp",
-                    app: "system_about"
+                    app: "system_about",
                 })
             },
             setWindowTitle() {
                 this.$emit("api", {
                     event: "setWindowTitle",
                     title: new Date().valueOf()
+                })
+            },
+            openAppWithData() {
+                this.$emit("api", {
+                    event: "openApp",
+                    app: "demo_colorfull",
+                    data: "我是传入的参数"
                 })
             }
         }

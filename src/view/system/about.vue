@@ -65,7 +65,6 @@
 </style>
 <script>
     export default {
-        name: "system_about",
         data() {
             return {
                 about: {
