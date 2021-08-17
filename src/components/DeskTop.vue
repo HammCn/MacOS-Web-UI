@@ -2,7 +2,7 @@
  * @FilePath: /mac-ui/src/components/DeskTop.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-17 23:25:38
+ * @LastEditTime: 2021-08-17 23:39:41
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -245,7 +245,7 @@
             this.openAppList[i].isTop = false
           }
           app.isTop = true
-          app.pid = this.openAppList.length + 1
+          app.pid = new Date().valueOf() + "." + parseInt(Math.random() * 99999999)
           this.openAppList.push(Object.assign({}, app))
         } else {
           let isExist = false
@@ -259,7 +259,7 @@
           }
           if (!isExist) {
             app.isTop = true
-            app.pid = this.openAppList.length + 1
+            app.pid = new Date().valueOf() + "." + parseInt(Math.random() * 99999999)
             this.openAppList.push(Object.assign({}, app))
           }
         }

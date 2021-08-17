@@ -2,7 +2,7 @@
  * @FilePath: /mac-ui/src/view/system/task.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:56:04
- * @LastEditTime: 2021-08-17 23:27:57
+ * @LastEditTime: 2021-08-17 23:40:03
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: Index
@@ -15,7 +15,6 @@
                     <i class="iconfont" :class="item.icon"
                         :style="{backgroundColor:item.iconBgColor,color:item.iconColor}"></i>
                     <span class="task-name">{{item.title}}</span>
-                    <span class="task-pid">PID: {{item.pid}}</span>
                 </div>
             </template>
         </div>
@@ -69,10 +68,6 @@
         color: white;
     }
 
-    .active .task-pid {
-        color: white;
-    }
-
     .task {
         margin: 10px 20px;
     }
@@ -82,10 +77,6 @@
         text-overflow: ellipsis;
         word-break: keep-all;
         overflow: hidden;
-    }
-
-    .task-item .task-pid {
-        font-size: 12px;
     }
 
     .task-item .iconfont {
