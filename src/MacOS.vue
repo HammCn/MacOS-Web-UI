@@ -1,14 +1,14 @@
 <!--
- * @FilePath: /mac-ui/src/App.vue
+ * @FilePath: /mac-ui/src/MacOS.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-17 23:26:23
+ * @LastEditTime: 2021-08-18 23:46:45
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
 -->
 <template>
-  <div class="app" @mousedown.self="boot">
+  <div class="mac-os" @mousedown.self="boot">
     <transition name="fade">
       <Bg v-if="isBg"></Bg>
     </transition>
@@ -25,7 +25,7 @@
 </template>
 
 <style scoped>
-  .app {
+  .mac-os {
     position: absolute;
     left: 0;
     right: 0;
@@ -55,6 +55,7 @@
     },
     created() {
       this.boot()
+      // this.logined()
     },
     methods: {
       boot() {

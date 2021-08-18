@@ -1,30 +1,35 @@
 /*
- * @FilePath: /MacOS/src/main.js
+ * @FilePath: /mac-ui/src/main.js
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-10 20:53:40
+ * @LastEditTime: 2021-08-18 23:44:51
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 入口文件
  */
 import { createApp } from 'vue'
+import { createStore } from 'vuex'
 
-import App from './App'
-let app = createApp(App)
+import MacOS from './MacOS'
+let macOS = createApp(MacOS)
 
 
 import ElementPlus from 'element-plus';
 import 'element-plus/lib/theme-chalk/index.css';
-app.use(ElementPlus)
+macOS.use(ElementPlus)
 
 import "@/asset/css/app.css"
 import "@/asset/css/animation.css"
 
 import config from './config'
-app.config.globalProperties.config = config
+macOS.config.globalProperties.config = config
 
-import api from './helper/api'
-app.config.globalProperties.api = api
+import tool from './helper/tool'
+macOS.config.globalProperties.tool = tool
 
-window.app = app
-app.mount('#app')
+import AppStore from './store/App'
+const store = createStore(AppStore)
+macOS.use(store)
+
+window.macOS = macOS
+macOS.mount('#app')

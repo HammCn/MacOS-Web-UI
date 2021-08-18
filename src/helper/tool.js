@@ -1,9 +1,9 @@
 /*
  * @Author: admin@hamm.cn
  * @Date: 2021-08-03 21:38:43
- * @LastEditTime: 2021-08-11 20:25:54
+ * @LastEditTime: 2021-08-18 23:00:27
  * @LastEditors: admin@hamm.cn
- * @FilePath: /MacOS/src/helper/tool.js
+ * @FilePath: /mac-ui/src/helper/tool.js
  * Written by https://hamm.cn
  * @Description: 通用方法封装库
  */
@@ -15,25 +15,57 @@ export default {
     getAccessToken() {
         return localStorage.getItem('AcessToken') || ""
     },
+    /**
+     * @description: 保存access_token到localstorage
+     */
     saveAccessToken(access_token) {
         localStorage.setItem('AcessToken', access_token)
     },
-    getDockAppList() {
-        let json = localStorage.getItem('dock_app') || '[]'
-        let arr = JSON.parse(json)
-        if (arr.length == 0) {
-            return AppModel.getDockAppList()
+    /**
+     * @description: APP是否常驻Dock
+     */
+    isAppInKeepList(app, dockAppList) {
+        for (let item of dockAppList) {
+            if (item.key == app.key) {
+                return true;
+            }
         }
-        return arr
+        return false;
     },
+    /**
+     * @description: APP是否打开
+     */
+    isAppInOpenList(app, openAppList) {
+        for (let item of openAppList) {
+            if (item.key == app.key) {
+                return true;
+            }
+        }
+        return false;
+    },
+    /**
+     * @description: 获取指定key的App
+     */
+    getAppByKey(key) {
+        let appList = AppModel.allAppList
+        for (let app of appList) {
+            if (app.key == key) {
+                return app
+            }
+        }
+        return false
+    },
+    /**
+     * @description: 获取桌面App列表
+     */
     getDeskTopApp() {
-        let json = localStorage.getItem('desktop_app') || '[]'
-        let arr = JSON.parse(json)
-        if (arr.length == 0) {
-            return AppModel.getAllAppList()
-        }
-        return arr
+        return AppModel.allAppList
     },
+    /**
+     * @description: 格式化时间
+     * @param {any} date
+     * @param {string} format
+     */
     formatTime(date, format) {
         if (!date) return;
         if (!format) format = "yyyy-MM-dd";

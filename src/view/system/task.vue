@@ -2,7 +2,7 @@
  * @FilePath: /mac-ui/src/view/system/task.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:56:04
- * @LastEditTime: 2021-08-17 23:40:03
+ * @LastEditTime: 2021-08-18 23:46:35
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: Index
@@ -10,7 +10,7 @@
 <template>
     <div class="task">
         <div class="task-list">
-            <template v-for="item in openAppList" :key="item.pid">
+            <template v-for="item in $store.state.openAppList" :key="item.pid">
                 <div class="task-item" :class="app && app.pid == item.pid ? 'active':''" @click="selectApp(item)">
                     <i class="iconfont" :class="item.icon"
                         :style="{backgroundColor:item.iconBgColor,color:item.iconColor}"></i>
@@ -109,15 +109,11 @@
                 app: false,
             }
         },
-        props: {
-            openAppList: Array
-        },
         created() {
         },
         methods: {
             selectApp(item) {
                 this.app = Object.assign({}, item)
-                console.log(item)
             },
             closeApp() {
                 if (this.app) {

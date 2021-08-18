@@ -1,0 +1,138 @@
+<!--
+ * @Author: admin@hamm.cn
+ * @Date: 2021-08-18 20:13:10
+ * @LastEditTime: 2021-08-18 23:43:42
+ * @LastEditors: admin@hamm.cn
+ * @Description: Dock栏
+ * @FilePath: /mac-ui/src/components/Dock.vue
+ * Written by https://hamm.cn
+-->
+<template>
+    <div class="footer">
+        <div class="space"></div>
+        <div class="dock">
+            <template v-for="item in $store.state.dockAppList" :key="item.key">
+                <div class="item" @click="$store.commit('openApp',item)"
+                    :class="$store.state.nowApp.key==item.key?'jump':''"
+                    v-if="item && tool.isAppInKeepList(item,$store.state.dockAppList) && !item.multiTask">
+                    <i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont"
+                        :class="item.icon"></i>
+                    <div class="dot" v-if="tool.isAppInOpenList(item,$store.state.openAppList)"></div>
+                    <div class="title">{{item.title}}</div>
+                </div>
+            </template>
+            <template v-for="item in $store.state.openAppList" :key="item.pid">
+                <div class="item" @click="$store.commit('showApp',item)"
+                    v-if="!tool.isAppInKeepList(item,$store.state.dockAppList) || item.multiTask"
+                    :class="$store.state.nowApp.id==item.id?'jump':''">
+                    <i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont"
+                        :class="item.icon"></i>
+                    <div class="dot" v-if="tool.isAppInOpenList(item,$store.state.openAppList)"></div>
+                    <div class="title">{{item.title}}</div>
+                </div>
+            </template>
+        </div>
+        <div class="space"></div>
+    </div>
+</template>
+
+<style scoped>
+    .dock .title {
+        display: none;
+    }
+
+    .dock .jump {
+        animation: jumpAnimation 0.8s ease 1;
+    }
+
+    .dock .item:hover .title {
+        position: absolute;
+        display: inherit;
+        word-break: keep-all;
+        background: rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 5px 10px;
+        font-size: 12px;
+        animation: dockTitleAnimation 0.5s ease 1 forwards;
+    }
+
+    .dock {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(20px);
+        border-radius: 10px;
+        flex-direction: row;
+        display: flex;
+        padding: 2px;
+    }
+
+    .dock .item {
+        padding: 3px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .dock .dot {
+        width: 3px;
+        height: 3px;
+        background: rgba(0, 0, 0, 0.8);
+        position: absolute;
+        bottom: 0px;
+        border-radius: 5px;
+        display: inline-block;
+        font-size: 0;
+    }
+
+    .dock .item .iconfont {
+        cursor: pointer;
+        border-radius: 20px;
+        padding: 2px;
+        display: inline-block;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        height: 30px;
+        width: 30px;
+        text-align: center;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform .3s, margin .3s;
+    }
+
+    .dock .item:hover .iconfont {
+        transform: scale(2) translateY(-10px);
+        margin: 0px 15px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .dock .nearby .iconfont {
+        transform: scale(1.6) translateY(-8px);
+        margin: 0px 12px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .dock .nearby1 .iconfont {
+        transform: scale(1.2) translateY(-6px);
+        margin: 0px 9px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .dock .nearby2 .iconfont {
+        transform: scale(1.1) translateY(-5px);
+        margin: 0px 7px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
+</style>
+<script>
+    export default {
+        data() {
+            return {
+            }
+        }
+    }
+</script>

@@ -1,11 +1,11 @@
 <!--
- * @FilePath: /MacOS/src/view/Bg.vue
+ * @FilePath: /mac-ui/src/components/Bg.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-05 20:59:02
- * @LastEditTime: 2021-08-05 22:02:16
+ * @LastEditTime: 2021-08-18 23:40:52
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
- * @Description: 
+ * @Description: 背景
 -->
 
 

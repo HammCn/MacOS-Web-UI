@@ -2,10 +2,10 @@
  * @FilePath: /mac-ui/src/components/Login.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-05 20:59:02
- * @LastEditTime: 2021-08-17 23:24:00
+ * @LastEditTime: 2021-08-18 23:43:56
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
- * @Description: 
+ * @Description: 登录页面
 -->
 
 <template>
@@ -146,7 +146,6 @@
     }
 </style>
 <script>
-    import tool from "@/helper/tool"
     export default {
         data() {
             return {
@@ -187,7 +186,7 @@
                     return
                 }
 
-                tool.saveAccessToken("guest")
+                this.tool.saveAccessToken("guest")
                 this.$emit("logined")
                 localStorage.setItem('user_name', this.user_name)
             }

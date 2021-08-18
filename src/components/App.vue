@@ -1,11 +1,11 @@
 <!--
- * @FilePath: /MacOS/src/view/AppLoader.vue
+ * @FilePath: /mac-ui/src/components/App.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-06 21:34:04
- * @LastEditTime: 2021-08-14 00:00:19
+ * @LastEditTime: 2021-08-18 23:47:38
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
- * @Description: 
+ * @Description: App主体
 -->
 
 
@@ -26,15 +26,16 @@
                     <div class="app-bar" :style="{backgroundColor:app.titleBgColor}" @mousedown.stop="positionMouseDown"
                         v-on:dblclick="appBarDoubleClicked">
                         <div class="controll">
-                            <div class="close" @click.stop="close"></div>
-                            <div class="min" @click.stop="hide"></div>
+                            <div class="close" @click.stop="closeApp"></div>
+                            <div class="min" @click.stop="hideApp"></div>
                             <div class="full" :class="app.disableResize?'full-disabled':''" @click="switchFullScreen">
                             </div>
                         </div>
-                        <div class="title" :style="{color:app.titleColor}">{{appData.title||app.title}}</div>
+                        <div class="title" :style="{color:app.titleColor}">{{appData.title||app.title}}
+                        </div>
                     </div>
                     <div class="app-body">
-                        <component :is="app.component" @api="appEvent" :app="app" :openAppList="openAppList">
+                        <component :is="app.component" :app="app" @api="appEvent">
                         </component>
                     </div>
                 </div>
@@ -50,7 +51,6 @@
 </template>
 
 <script>
-    import AppModel from "@/model/App"
     import { defineAsyncComponent } from 'vue'
     export default {
         components: {
@@ -67,14 +67,17 @@
         },
         props: {
             app: Object,
-            openAppList: Array
+        },
+        watch: {
+            app() {
+                this.appData = Object({}, this.app)
+            }
         },
         data() {
             return {
                 appData: {
                     title: ""
                 },
-                appList: AppModel.getAllAppList(),
                 defaultIndex: 10,
                 activeIndex: 20,
                 isBoxMoving: false,
@@ -93,20 +96,23 @@
             }
         },
         created() {
-            if (this.app.width) {
-                this.nowRect.left = this.nowRect.right = (document.body.clientWidth - this.app.width) / 2
-            }
-            if (this.app.height) {
-                this.nowRect.bottom = (document.body.clientHeight - this.app.height) / 2
-                this.nowRect.top = (document.body.clientHeight - this.app.height) / 2
-            }
+            this.appData = Object({}, this.app)
+            this.setReact()
         },
         methods: {
+            setReact() {
+                if (this.app.width) {
+                    this.nowRect.left = this.nowRect.right = (document.body.clientWidth - this.app.width) / 2
+                }
+                if (this.app.height) {
+                    this.nowRect.bottom = (document.body.clientHeight - this.app.height) / 2
+                    this.nowRect.top = (document.body.clientHeight - this.app.height) / 2
+                }
+            },
             /**
              * @description: 监听APP发送的事件 转发或处理到桌面组件中
              */
             appEvent(e) {
-                // console.log(e)
                 switch (e.event) {
                     case 'windowMaxSize':
                         if (this.app.disableResize) {
@@ -130,27 +136,27 @@
                         this.isMaxShowing = true
                         break;
                     case 'windowMinSize':
-                        this.hide()
+                        this.hideApp()
                         break;
                     case 'windowClose':
-                        this.close()
+                        this.closeApp()
                         break;
                     case 'openApp':
-                        if (e.data) {
-                            this.$emit('openWithData', {
-                                app: AppModel.getAppByKey(e.app),
+                        if (e.data && e.app) {
+                            this.$store.commit('openWithData', {
+                                app: this.tool.getAppByKey(e.app),
                                 data: e.data
                             })
                         } else {
-                            this.$emit('open', AppModel.getAppByKey(e.app))
+                            this.$store.commit('openApp', this.tool.getAppByKey(e.app))
                         }
                         break;
                     case 'closeApp':
                         if (e.pid) {
-                            this.$emit('closeWithPid', e.pid)
+                            this.$store.commit('closeWithPid', e.pid)
                         }
                         if (e.app) {
-                            this.$emit('close', AppModel.getAppByKey(e.app))
+                            this.$store.commit('closeApp', this.tool.getAppByKey(e.app))
                         }
                         break;
                     case 'setWindowTitle':
@@ -162,17 +168,17 @@
             /**
              * @description: 关闭当前应用
              */
-            close() {
-                this.$emit('close', this.app)
+            closeApp() {
+                this.$store.commit('closeApp', this.app)
             },
             /**
              * @description: 隐藏当前应用
              */
-            hide() {
-                this.$emit('hide', this.app)
+            hideApp() {
+                this.$store.commit('hideApp', this.app)
             },
             showThisApp() {
-                this.$emit('show', this.app)
+                this.$store.commit('showApp', this.app)
             },
             /**
              * @description: 全屏切换

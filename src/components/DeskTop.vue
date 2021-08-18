@@ -2,10 +2,10 @@
  * @FilePath: /mac-ui/src/components/DeskTop.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-17 23:39:41
+ * @LastEditTime: 2021-08-18 23:43:36
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
- * @Description: 
+ * @Description: 桌面
 -->
 
 <template>
@@ -63,7 +63,7 @@
     <div class="body">
       <div class="desktop-app">
         <template v-for="item in deskTopAppList" :key="item.key">
-          <div class="app-item" v-on:dblclick="openApp(item)" v-if="!item.hideInDesktop">
+          <div class="app-item" v-on:dblclick="$store.commit('openApp',item)" v-if="!item.hideInDesktop">
             <div class="icon"><i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont"
                 :class="item.icon"></i></div>
             <div class="title">{{item.title}}</div>
@@ -71,54 +71,27 @@
         </template>
       </div>
       <transition-group name="fade-window">
-        <template v-for="item in openAppList" :key="item.key">
-          <AppLoader :app="item" :openAppList="openAppList" @open="openApp" @openWithData="openAppWithData"
-            @close="closeApp" @closeWithPid="closeWithPid" @hide="hideApp" @show="showApp" v-show="!item.hide">
-            123</AppLoader>
+        <template v-for="item in $store.state.openAppList" :key="item.pid">
+          <App :id="item.pid" v-show="!item.hide" :app="item"></App>
         </template>
       </transition-group>
     </div>
-    <div class="footer">
-      <div class="space"></div>
-      <div class="dock">
-        <template v-for="item in dockAppList" :key="item.key">
-          <div class="item" @click="openApp(item)" :class="app.key==item.key?'jump':''"
-            v-if="isAppInKeepList(item) && !item.multiTask">
-            <i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont" :class="item.icon"></i>
-            <div class="dot" v-if="isAppInOpenList(item)"></div>
-            <div class="title">{{item.title}}</div>
-          </div>
-        </template>
-        <template v-for="item in openAppList" :key="item.key">
-          <div class="item" @click="showApp(item)" v-if="!isAppInKeepList(item) || item.multiTask"
-            :class="app.id==item.id?'jump':''">
-            <i :style="{backgroundColor:item.iconBgColor,color:item.iconColor}" class="iconfont" :class="item.icon"></i>
-            <div class="dot" v-if="isAppInOpenList(item)"></div>
-            <div class="title">{{item.title}}</div>
-          </div>
-        </template>
-      </div>
-      <div class="space"></div>
-    </div>
+    <Dock></Dock>
   </div>
 </template>
 <script>
-  import AppModel from "@/model/App"
-  import AppLoader from "@/components/AppLoader"
-  import tool from "@/helper/tool"
+  import App from "@/components/App"
+  import Dock from "@/components/Dock"
   export default {
     components: {
-      AppLoader,
+      App, Dock
     },
     data() {
       return {
         userName: "",
-        app: false,
         menu: [],
         timeString: "",
-        openAppList: [],
         deskTopAppList: [],
-        dockAppList: [],
         deskTopMenu: [
           // {
           //   key: "desktop",
@@ -158,155 +131,21 @@
     created() {
       this.menu = this.deskTopMenu
       this.userName = localStorage.getItem('user_name') || ''
-      this.loadApp()
+      this.deskTopAppList = this.tool.getDeskTopApp()
       this.startTimer()
+      this.$store.commit('getDockAppList')
     },
     methods: {
       startTimer() {
         setInterval(() => {
-          this.timeString = tool.formatTime(new Date(), 'MM-dd HH:mm')
+          this.timeString = this.tool.formatTime(new Date(), 'MM-dd HH:mm')
         }, 1000)
       },
       /**
-       * @description: 打开上一次的应用
-       */
-      openTheLastApp() {
-        let flag = false
-        for (let i = this.openAppList.length - 1; i >= 0; i--) {
-          if (!this.openAppList[i].hide && !flag) {
-            this.openAppList[i].isTop = true
-            this.app = this.openAppList[i]
-            flag = true
-          }
-        }
-      },
-      /**
-       * @description: 最小化应用
-       */
-      hideApp(app) {
-        // console.warn('hideApp')
-        for (let i in this.openAppList) {
-          if (this.openAppList[i].pid == app.pid) {
-            this.openAppList[i].hide = true
-            break
-          }
-        }
-        this.openTheLastApp()
-      },
-      /**
-       * @description: 根据PID关闭应用
-       */
-      closeWithPid(pid) {
-        for (let i in this.openAppList) {
-          if (this.openAppList[i].pid == pid) {
-            this.openAppList.splice(i, 1)
-            break
-          }
-        }
-      },
-      /**
-       * @description: 关闭应用
-       */
-      closeApp(app) {
-        // console.warn('closeApp')
-        if (app.hideWhenClose) {
-          this.hideApp(app)
-        } else {
-          for (let i in this.openAppList) {
-            if (app.pid) {
-              if (this.openAppList[i].pid == app.pid) {
-                this.openAppList.splice(i, 1)
-                break
-              }
-            } else {
-              if (this.openAppList[i].key == app.key) {
-                this.openAppList.splice(i, 1)
-                break
-              }
-            }
-          }
-          this.openTheLastApp()
-        }
-      },
-      openAppWithData(e) {
-        if (e.app && e.data) {
-          let app = e.app
-          app.data = e.data
-          this.openApp(app)
-        }
-      },
-      /**
-       * @description: 打开应用
-       */
-      openApp(app) {
-        this.app = app
-        if (app.multiTask) {
-          for (let i in this.openAppList) {
-            this.openAppList[i].isTop = false
-          }
-          app.isTop = true
-          app.pid = new Date().valueOf() + "." + parseInt(Math.random() * 99999999)
-          this.openAppList.push(Object.assign({}, app))
-        } else {
-          let isExist = false
-          for (let i in this.openAppList) {
-            this.openAppList[i].isTop = false
-            if (this.openAppList[i].key == app.key) {
-              this.openAppList[i].hide = false
-              this.openAppList[i].isTop = true
-              isExist = true
-            }
-          }
-          if (!isExist) {
-            app.isTop = true
-            app.pid = new Date().valueOf() + "." + parseInt(Math.random() * 99999999)
-            this.openAppList.push(Object.assign({}, app))
-          }
-        }
-      },
-      /**
-       * @description: 显示并置顶APP
-       */
-      showApp(app) {
-        this.app = app
-        for (let i in this.openAppList) {
-          this.openAppList[i].isTop = false
-          if (this.openAppList[i].pid == app.pid) {
-            this.openAppList[i].hide = false
-            this.openAppList[i].isTop = true
-          }
-        }
-      },
-      /**
-       * @description: APP是否常驻Dock
-       */
-      isAppInKeepList(app) {
-        for (let item of this.dockAppList) {
-          if (item.key == app.key) {
-            return true;
-          }
-        }
-        return false;
-      },
-      /**
-       * @description: APP是否打开
-       */
-      isAppInOpenList(app) {
-        for (let item of this.openAppList) {
-          if (item.key == app.key) {
-            return true;
-          }
-        }
-        return false;
-      },
-      /**
-       * @description: 根据key打开APP
+       * @description: 打开指定key的应用
        */
       openAppByKey(key) {
-        let app = AppModel.getAppByKey(key)
-        if (app) {
-          this.openApp(app)
-        }
+        this.$store.commit('openAppByKey', key)
       },
       /**
        * @description: 锁定屏幕
@@ -325,13 +164,6 @@
        */
       logout() {
         this.$emit('logout')
-      },
-      /**
-       * @description: 初始化加载APP
-       */
-      loadApp() {
-        this.dockAppList = tool.getDockAppList()
-        this.deskTopAppList = tool.getDeskTopApp()
       },
     }
   }
