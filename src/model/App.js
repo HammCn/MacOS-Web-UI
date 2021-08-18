@@ -2,7 +2,7 @@
  * @FilePath: /mac-ui/src/model/App.js
  * @Author: admin@hamm.cn
  * @Date: 2021-08-09 20:51:06
- * @LastEditTime: 2021-08-18 22:05:05
+ * @LastEditTime: 2021-08-19 00:38:03
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 
@@ -44,6 +44,39 @@ export default {
             "width": 600,
             "height": 400,
             "keepInDock": true,
+        },
+        {
+            "key": "demo_github",
+            "icon": "icon-github",
+            "title": "Github仓库",
+            "iconColor": "rgb(36,41,46)",
+            "iconBgColor": "#eee",
+            "keepInDock": true,
+            "outLink": true,
+            "url": "https://github.com/HammCn/MacOS-Web-UI"
+        },
+        {
+            "key": "demo_gitee",
+            "icon": "icon-gitee",
+            "title": "Gitee仓库",
+            "iconColor": "#fff",
+            "iconBgColor": "rgb(199,29,35)",
+            "keepInDock": true,
+            "outLink": true,
+            "url": "https://gitee.com/hamm/mac-ui"
+        },
+        {
+            "key": "demo_dy",
+            "component": "DemoWeb",
+            "icon": "icon-video_fill",
+            "title": "抖音去水印",
+            "iconColor": "#fff",
+            "iconBgColor": "rgb(33,179,81)",
+            "width": 600,
+            "height": 600,
+            "keepInDock": true,
+            "innerLink": true,
+            "url": "https://dy.hamm.cn/"
         },
         {
             "key": "demo_dock",

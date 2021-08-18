@@ -2,7 +2,7 @@
  * @FilePath: /mac-ui/src/components/DeskTop.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-18 23:43:36
+ * @LastEditTime: 2021-08-19 00:41:32
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: 桌面
@@ -72,7 +72,7 @@
       </div>
       <transition-group name="fade-window">
         <template v-for="item in $store.state.openAppList" :key="item.pid">
-          <App :id="item.pid" v-show="!item.hide" :app="item"></App>
+          <App :id="item.pid" v-if="!item.outLink" v-show="!item.hide" :app="item"></App>
         </template>
       </transition-group>
     </div>

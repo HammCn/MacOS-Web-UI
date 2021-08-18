@@ -2,7 +2,7 @@
  * @FilePath: /mac-ui/src/components/App.vue
  * @Author: admin@hamm.cn
  * @Date: 2021-08-06 21:34:04
- * @LastEditTime: 2021-08-18 23:47:38
+ * @LastEditTime: 2021-08-19 00:34:15
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: App主体
@@ -64,6 +64,7 @@
             DemoColorFull: defineAsyncComponent(() => import('@/view/demo/colorfull')),
             DemoCamera: defineAsyncComponent(() => import('@/view/demo/camera')),
             DemoMultiTask: defineAsyncComponent(() => import('@/view/demo/multitask')),
+            DemoWeb: defineAsyncComponent(() => import('@/view/demo/web')),
         },
         props: {
             app: Object,

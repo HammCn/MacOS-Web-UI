@@ -2,7 +2,7 @@
  * @FilePath: /mac-ui/src/store/App.js
  * @Author: admin@hamm.cn
  * @Date: 2021-08-10 20:53:07
- * @LastEditTime: 2021-08-18 23:46:25
+ * @LastEditTime: 2021-08-19 00:40:52
  * @LastEditors: admin@hamm.cn
  * Written by https://hamm.cn
  * @Description: API
@@ -81,6 +81,10 @@ export default {
          * @description: 打开应用
          */
         openApp(state, app) {
+            if (app.outLink) {
+                app.url && window.open(app.url)
+                return
+            }
             state.nowApp = Object.assign({}, app)
             if (app.multiTask) {
                 for (let i in state.openAppList) {
