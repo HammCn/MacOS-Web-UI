@@ -8,7 +8,8 @@
 ---
 
 ### 项目介绍
-一套基于Vue3和ElementUI实现类似MacOS风格的WebUI，尽可能还原MacOS相关的设计，目前正在开发中。QQ群：1140258698
+一套基于Vue3和ElementUI实现类似MacOS风格的WebUI，尽可能还原MacOS相关的设计，目前正在开发中。   
+QQ群：1140258698
 
 ### 体验地址
 
