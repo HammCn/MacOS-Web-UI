@@ -35,6 +35,14 @@
         <div class="space"></div>
     </div>
 </template>
+<script>
+    export default {
+        data() {
+            return {
+            }
+        }
+    }
+</script>
 
 <style scoped>
     .dock .title {
@@ -109,30 +117,4 @@
         margin: 0px 15px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     }
-
-    .dock .nearby .iconfont {
-        transform: scale(1.6) translateY(-8px);
-        margin: 0px 12px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .dock .nearby1 .iconfont {
-        transform: scale(1.2) translateY(-6px);
-        margin: 0px 9px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .dock .nearby2 .iconfont {
-        transform: scale(1.1) translateY(-5px);
-        margin: 0px 7px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    }
 </style>
-<script>
-    export default {
-        data() {
-            return {
-            }
-        }
-    }
-</script>
