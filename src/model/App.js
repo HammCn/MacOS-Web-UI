@@ -1,13 +1,3 @@
-/*
- * @FilePath: /mac-ui/src/model/App.js
- * @Author: admin@hamm.cn
- * @Date: 2021-08-09 20:51:06
- * @LastEditTime: 2021-08-19 00:38:03
- * @LastEditors: admin@hamm.cn
- * Written by https://hamm.cn
- * @Description: 
- */
-
 export default {
     allAppList: [
         {

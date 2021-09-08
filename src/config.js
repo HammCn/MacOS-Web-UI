@@ -1,16 +1,6 @@
-/*
- * @FilePath: /el-vue/src/config.js
- * @Author: admin@hamm.cn
- * @Date: 2021-08-02 22:06:29
- * @LastEditTime: 2021-08-03 22:14:56
- * @LastEditors: admin@hamm.cn
- * Written by https://hamm.cn
- * @Description: 
- */
-
 export default {
     debug: true,
-    apiBaseUrl: "https://api.bbbug.com/api/",
+    apiBaseUrl: "https://hamm.cn",
     qiyeWechatWebhook: '',
     enableErrorReporter: false,
     httpStatusCode: {

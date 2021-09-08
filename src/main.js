@@ -1,12 +1,3 @@
-/*
- * @FilePath: /mac-ui/src/main.js
- * @Author: admin@hamm.cn
- * @Date: 2021-08-02 21:45:20
- * @LastEditTime: 2021-08-18 23:44:51
- * @LastEditors: admin@hamm.cn
- * Written by https://hamm.cn
- * @Description: 入口文件
- */
 import { createApp } from 'vue'
 import { createStore } from 'vuex'
 
@@ -15,7 +6,7 @@ let macOS = createApp(MacOS)
 
 
 import ElementPlus from 'element-plus';
-import 'element-plus/lib/theme-chalk/index.css';
+import 'element-plus/dist/index.css'
 macOS.use(ElementPlus)
 
 import "@/asset/css/app.css"

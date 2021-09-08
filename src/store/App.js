@@ -1,12 +1,3 @@
-/*
- * @FilePath: /mac-ui/src/store/App.js
- * @Author: admin@hamm.cn
- * @Date: 2021-08-10 20:53:07
- * @LastEditTime: 2021-08-19 00:40:52
- * @LastEditors: admin@hamm.cn
- * Written by https://hamm.cn
- * @Description: API
- */
 import AppModel from "@/model/App"
 import tool from "@/helper/tool"
 export default {

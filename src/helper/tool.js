@@ -1,12 +1,3 @@
-/*
- * @Author: admin@hamm.cn
- * @Date: 2021-08-03 21:38:43
- * @LastEditTime: 2021-08-18 23:00:27
- * @LastEditors: admin@hamm.cn
- * @FilePath: /mac-ui/src/helper/tool.js
- * Written by https://hamm.cn
- * @Description: 通用方法封装库
- */
 import AppModel from "@/model/App"
 export default {
     /**
