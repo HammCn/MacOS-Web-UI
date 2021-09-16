@@ -1,7 +1,7 @@
 <template>
   <div class="mac-os" @mousedown.self="boot">
     <transition name="fade">
-      <Bg v-if="isBg"></Bg>
+      <Bg v-if="isBg" :blur="blur"></Bg>
     </transition>
     <transition name="fade">
       <Loading v-if="isLoading" @loaded="loaded"></Loading>
@@ -43,6 +43,7 @@ export default {
   },
   data() {
     return {
+      blur:'3px',
       isBg: false,
       isLoading: false,
       isLogin: false,
@@ -63,7 +64,8 @@ export default {
       this.isLogin = true;
     },
     logined() {
-      console.log("login success");
+      console.log("login success\nunblured");
+      this.blur = '0px'
       this.isLogin = false;
       this.isDeskTop = true;
     },
