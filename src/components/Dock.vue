@@ -2,41 +2,12 @@
   <div class="footer">
     <div class="space"></div>
     <div class="dock">
-      <template v-for="item in $store.state.dockAppList" :key="item.key">
+      <template v-for="item in $store.state.dockAppList" :key="item.pid">
         <div
           class="item"
-          @click="$store.commit('openApp', item)"
-          :class="$store.state.nowApp.key == item.key ? 'jump' : ''"
-          v-if="
-            item &&
-            tool.isAppInKeepList(item, $store.state.dockAppList) &&
-            !item.multiTask
-          "
-        >
-          <i
-            :style="{
-              backgroundColor: item.iconBgColor,
-              color: item.iconColor,
-            }"
-            class="iconfont"
-            :class="item.icon"
-          ></i>
-          <div
-            class="dot"
-            v-if="tool.isAppInOpenList(item, $store.state.openAppList)"
-          ></div>
-          <div class="title">{{ item.title }}</div>
-        </div>
-      </template>
-      <template v-for="item in $store.state.openAppList" :key="item.pid">
-        <div
-          class="item"
-          @click="$store.commit('showApp', item)"
-          v-if="
-            !tool.isAppInKeepList(item, $store.state.dockAppList) ||
-            item.multiTask
-          "
-          :class="$store.state.nowApp.id == item.id ? 'jump' : ''"
+          @click="openApp(item)"
+          :class="$store.state.nowApp.pid == item.pid ? 'jump' : ''"
+          v-if="item && tool.isAppInKeepList(item, $store.state.dockAppList)"
         >
           <i
             :style="{
@@ -62,6 +33,11 @@ export default {
   data() {
     return {};
   },
+  methods: {
+    openApp(item) {
+      this.$store.commit("openApp", item);
+    },
+  },
 };
 </script>
 
@@ -75,12 +51,7 @@ export default {
   flex-direction: row;
   display: flex;
   padding: 2px;
-  .title {
-    display: none;
-  }
-  .jump {
-    animation: jumpAnimation 0.8s ease 1;
-  }
+
   .item {
     padding: 3px;
     display: flex;
@@ -105,6 +76,11 @@ export default {
     }
   }
   .item:hover {
+    .iconfont {
+      transform: scale(2) translateY(-10px);
+      margin: 0px 15px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
     .title {
       position: absolute;
       display: inherit;
@@ -116,11 +92,6 @@ export default {
       font-size: 12px;
       animation: dockTitleAnimation 0.5s ease 1 forwards;
     }
-    .iconfont {
-      transform: scale(2) translateY(-10px);
-      margin: 0px 15px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    }
   }
   .dot {
     width: 3px;
@@ -131,6 +102,12 @@ export default {
     border-radius: 5px;
     display: inline-block;
     font-size: 0;
+  }
+  .title {
+    display: none;
+  }
+  .jump {
+    animation: jumpAnimation 0.8s ease 1;
   }
 }
 </style>

@@ -63,7 +63,7 @@
   color: white;
   margin-top: -100px;
   z-index: 99999;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(100px);
   .head {
     background-size: 40% auto;
     background-position: center center;

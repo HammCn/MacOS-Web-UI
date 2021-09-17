@@ -16,7 +16,6 @@
         top: nowRect.top + 'px',
         bottom: nowRect.bottom + 'px',
         right: nowRect.right + 'px',
-        zIndex: app.isTop ? 98 : 88,
       }"
       :class="getExtBoxClasses()"
     >
@@ -234,7 +233,10 @@ export default {
       if (this.app.disableResize) {
         str += "resize-disabled ";
       }
-      if (this.app.isTop) {
+      if (
+        this.$store.state.openAppList[this.$store.state.openAppList.length - 1]
+          .pid == this.app.pid
+      ) {
         str += "isTop ";
       }
       return str;
@@ -382,7 +384,7 @@ export default {
     left: -5px !important;
     right: -5px !important;
     top: 23px !important;
-    bottom: 46px !important;
+    bottom: 41px !important;
   }
 
   .isFullScreen {

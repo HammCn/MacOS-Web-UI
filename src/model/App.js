@@ -64,7 +64,6 @@ export default {
             "iconBgColor": "rgb(33,179,81)",
             "width": 600,
             "height": 600,
-            "keepInDock": true,
             "innerLink": true,
             "url": "https://dy.hamm.cn/"
         },
@@ -135,18 +134,6 @@ export default {
             "width": 540,
             "height": 540,
             "disableResize": true,
-        },
-        {
-            "key": "demo_multitask",
-            "component": "DemoMultiTask",
-            "icon": "icon-app",
-            "title": "多任务应用",
-            "iconColor": "#fff",
-            "iconBgColor": "#333",
-            "width": 600,
-            "height": 400,
-            "multiTask": true,
-            "keepInDock": true,
         },
     ]
 }

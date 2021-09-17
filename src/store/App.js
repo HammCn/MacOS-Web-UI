@@ -3,6 +3,7 @@ import tool from "@/helper/tool"
 export default {
     state() {
         return {
+            showLogin: false,
             nowApp: false,
             openAppList: [],
             dockAppList: [],
@@ -10,15 +11,27 @@ export default {
     },
     mutations: {
         /**
+         * @description: 退出登录
+         */
+        logout(state) {
+            state.nowApp = false
+            state.openAppList = []
+            state.showLogin = true
+        },
+        /**
+         * @description: 登录
+         */
+        login(state) {
+            state.showLogin = false
+        },
+        /**
          * @description: 打开上一次的应用
          */
         openTheLastApp(state) {
-            let flag = false
             for (let i = state.openAppList.length - 1; i >= 0; i--) {
-                if (!state.openAppList[i].hide && !flag) {
-                    state.openAppList[i].isTop = true
-                    state.nowApp = Object.assign({}, state.openAppList[i])
-                    flag = true
+                if (!state.openAppList[i].hide) {
+                    this.commit("showApp", state.openAppList[i])
+                    break
                 }
             }
         },
@@ -44,6 +57,12 @@ export default {
                     break
                 }
             }
+            for (let i in state.dockAppList) {
+                if (state.dockAppList[i].pid == pid && !state.dockAppList[i].keepInDock) {
+                    state.dockAppList.splice(i, 1)
+                    break
+                }
+            }
         },
         /**
          * @description: 关闭应用
@@ -65,6 +84,21 @@ export default {
                         }
                     }
                 }
+                if (!app.keepInDock) {
+                    for (let i in state.dockAppList) {
+                        if (app.pid) {
+                            if (state.dockAppList[i].pid == app.pid) {
+                                state.dockAppList.splice(i, 1)
+                                break
+                            }
+                        } else {
+                            if (state.dockAppList[i].key == app.key) {
+                                state.dockAppList.splice(i, 1)
+                                break
+                            }
+                        }
+                    }
+                }
                 this.commit('openTheLastApp')
             }
         },
@@ -76,43 +110,50 @@ export default {
                 app.url && window.open(app.url)
                 return
             }
-            state.nowApp = Object.assign({}, app)
-            if (app.multiTask) {
-                for (let i in state.openAppList) {
-                    state.openAppList[i].isTop = false
-                }
-                app.isTop = true
-                app.pid = new Date().valueOf() + "." + parseInt(Math.random() * 99999999)
-                state.openAppList.push(Object.assign({}, app))
-            } else {
-                let isExist = false
-                for (let i in state.openAppList) {
-                    state.openAppList[i].isTop = false
-                    if (state.openAppList[i].key == app.key) {
-                        state.openAppList[i].hide = false
-                        state.openAppList[i].isTop = true
-                        isExist = true
-                    }
-                }
-                if (!isExist) {
-                    app.isTop = true
-                    app.pid = new Date().valueOf() + "." + parseInt(Math.random() * 99999999)
-                    state.openAppList.push(Object.assign({}, app))
+            app.hide = false
+            let isExist = false
+            for (let i in state.openAppList) {
+                if (state.openAppList[i].key == app.key) {
+                    isExist = true
+                    break
                 }
             }
+            if (isExist) {
+                this.commit('showApp', app)
+            } else {
+                app.pid = new Date().valueOf() + "." + parseInt(Math.random() * 99999999)
+                app = JSON.parse(JSON.stringify(app))
+                state.openAppList.push(app)
+                let isExistDock = false
+                for (let i in state.dockAppList) {
+                    if (state.dockAppList[i].key == app.key) {
+                        //dock里已经有相同的应用了 不push
+                        isExistDock = true
+                        break
+                    }
+                }
+                if (!isExistDock) {
+                    state.dockAppList.push(app)
+                }
+            }
+            state.nowApp = JSON.parse(JSON.stringify(app))
         },
         /**
          * @description: 显示并置顶APP
          */
         showApp(state, app) {
-            state.nowApp = app
-            for (let i in state.openAppList) {
-                state.openAppList[i].isTop = false
-                if (state.openAppList[i].pid == app.pid) {
-                    state.openAppList[i].hide = false
-                    state.openAppList[i].isTop = true
+            let openAppList = JSON.parse(JSON.stringify(state.openAppList))
+            for (let i in openAppList) {
+                if (openAppList[i].pid == app.pid) {
+                    openAppList.splice(i, 1)
+                    break
                 }
             }
+            app.hide = false
+            app = JSON.parse(JSON.stringify(app))
+            openAppList.push(app)
+            state.openAppList = openAppList
+            state.nowApp = app
         },
         /**
          * @description: 根据key打开APP
@@ -138,6 +179,7 @@ export default {
             let appList = AppModel.allAppList
             for (let app of appList) {
                 if (app.keepInDock) {
+                    app.pid = new Date().valueOf() + "." + parseInt(Math.random() * 99999999)
                     arr.push(app)
                 }
             }

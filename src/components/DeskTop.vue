@@ -351,6 +351,7 @@ export default {
   }
   .footer {
     display: flex;
+    z-index: 100;
   }
 }
 </style>
