@@ -1,7 +1,11 @@
 <template>
-  <div class="mac-os" @mousedown.self="boot">
+  <div
+    class="mac-os"
+    @mousedown.self="boot"
+    @contextmenu.prevent="onContextShow()"
+  >
     <transition name="fade">
-      <Bg v-if="isBg" :blur="blur"></Bg>
+      <Bg v-if="isBg"></Bg>
     </transition>
     <transition name="fade">
       <Loading v-if="isLoading" @loaded="loaded"></Loading>
@@ -43,7 +47,6 @@ export default {
   },
   data() {
     return {
-      blur:'3px',
       isBg: false,
       isLoading: false,
       isLogin: false,
@@ -55,6 +58,9 @@ export default {
     // this.logined()
   },
   methods: {
+    onContextShow() {
+      console.log("onContextShow");
+    },
     boot() {
       this.isLoading = true;
     },
@@ -64,8 +70,6 @@ export default {
       this.isLogin = true;
     },
     logined() {
-      console.log("login success\nunblured");
-      this.blur = '0px'
       this.isLogin = false;
       this.isDeskTop = true;
     },

@@ -61,7 +61,11 @@
         </div>
       </div>
     </div>
-    <div class="body">
+    <div
+      class="body"
+      @contextmenu.prevent.self="openMenu($event)"
+      @click.stop="rightMenuVisible = false"
+    >
       <div class="desktop-app">
         <template v-for="item in deskTopAppList" :key="item.key">
           <div
@@ -93,6 +97,21 @@
           ></App>
         </template>
       </transition-group>
+      <transition name="fade-menu">
+        <div
+          v-show="rightMenuVisible"
+          :style="{ left: rightMenuLeft + 'px', top: rightMenuTop + 'px' }"
+          class="contextmenu"
+        >
+          <div @click="lockScreen">锁定屏幕...</div>
+          <hr />
+          <div @click="openAppByKey('system_setting')">系统偏好设置...</div>
+          <div @click="openAppByKey('system_task')">强制退出...</div>
+          <hr />
+          <div @click="$message.warning('即将上线，敬请期待')">设置壁纸...</div>
+          <div @click="openAppByKey('system_about')">关于我们</div>
+        </div>
+      </transition>
     </div>
     <Dock></Dock>
   </div>
@@ -107,6 +126,9 @@ export default {
   },
   data() {
     return {
+      rightMenuVisible: false,
+      rightMenuLeft: 0,
+      rightMenuTop: 0,
       userName: "",
       menu: [],
       timeString: "",
@@ -155,6 +177,28 @@ export default {
     this.$store.commit("getDockAppList");
   },
   methods: {
+    /**
+     * @description: 打开右键菜单
+     */
+    openMenu(e) {
+      const menuMinWidth = 105;
+      const offsetLeft = this.$el.getBoundingClientRect().left; // container margin left
+      const offsetWidth = this.$el.offsetWidth; // container width
+      const maxLeft = offsetWidth - menuMinWidth; // left boundary
+      const left = e.clientX - offsetLeft; // margin right
+
+      if (left > maxLeft) {
+        this.rightMenuLeft = maxLeft;
+      } else {
+        this.rightMenuLeft = left;
+      }
+
+      this.rightMenuTop = e.clientY - 30;
+      this.rightMenuVisible = true;
+    },
+    /**
+     * @description: 打开时间计时器
+     */
     startTimer() {
       setInterval(() => {
         this.timeString = this.tool.formatTime(new Date(), "MM-dd HH:mm");
@@ -346,6 +390,44 @@ export default {
       }
       .app-item:hover {
         border: 2px solid rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    .contextmenu {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgb(0 0 0 / 30%);
+      color: #333;
+      font-size: 14px;
+      text-align: left;
+      width: 200px;
+      overflow: hidden;
+      padding: 2px 0px;
+      text-shadow: none;
+      z-index: 100;
+      hr {
+        border: none;
+        border-top: 1px solid #ddd;
+      }
+      div {
+        cursor: pointer;
+        font-size: 13px !important;
+        color: #333;
+        border-radius: 5px;
+        line-height: 2;
+        padding: 0px 12px;
+        display: flex;
+        align-items: center;
+        margin: 3px 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      div:hover {
+        background: #4b9efb;
+        color: white;
+        border-radius: 5px;
       }
     }
   }
