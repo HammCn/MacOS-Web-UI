@@ -7,9 +7,16 @@ export default {
             nowApp: false,
             openAppList: [],
             dockAppList: [],
+            volumn: 80,
         }
     },
     mutations: {
+        /**
+         * @description: 设置全局音量
+         */
+        setVolumn(state, volumn) {
+            state.volumn = volumn
+        },
         /**
          * @description: 退出登录
          */

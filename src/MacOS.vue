@@ -47,15 +47,15 @@ export default {
   },
   data() {
     return {
-      isBg: false,
+      isBg: true,
       isLoading: false,
       isLogin: false,
       isDeskTop: false,
     };
   },
   created() {
-    this.boot();
-    // this.logined()
+    // this.boot();
+    this.logined()
   },
   methods: {
     onContextShow() {

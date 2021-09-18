@@ -51,9 +51,24 @@
         <div class="audio">
           <i
             class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-39"
+            @click="showOrHideVolumn"
           ></i>
+
+          <transition name="fade">
+            <el-slider
+              v-show="isVolumnShow"
+              v-model="volumn"
+              :show-tooltip="false"
+              vertical
+            ></el-slider>
+          </transition>
         </div>
-        <div class="datetime">{{ timeString }}</div>
+        <div class="datetime" @click.self="showOrHideCalendar">
+          {{ timeString }}
+          <transition name="fade">
+            <el-calendar v-model="nowDate" v-if="isCalendarShow"> </el-calendar>
+          </transition>
+        </div>
         <div class="notification">
           <i
             class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-25"
@@ -63,8 +78,11 @@
     </div>
     <div
       class="body"
-      @contextmenu.prevent.self="openMenu($event)"
-      @click.stop="rightMenuVisible = false"
+      @contextmenu.prevent.self="
+        hideAllController();
+        openMenu($event);
+      "
+      @click.stop="hideAllController()"
     >
       <div class="desktop-app">
         <template v-for="item in deskTopAppList" :key="item.key">
@@ -126,6 +144,11 @@ export default {
   },
   data() {
     return {
+      isCalendarShow: false,
+      nowDate: new Date(),
+      volumnDelayTimer: false,
+      volumn: 80,
+      isVolumnShow: false,
       rightMenuVisible: false,
       rightMenuLeft: 0,
       rightMenuTop: 0,
@@ -169,6 +192,18 @@ export default {
       ],
     };
   },
+  watch: {
+    volumn() {
+      this.$store.commit("setVolumn", this.volumn);
+      clearTimeout(this.volumnDelayTimer);
+      this.volumnDelayTimer = setTimeout(() => {
+        this.isVolumnShow = false;
+      }, 3000);
+    },
+    "$store.state.volumn"() {
+      console.log(this.$store.state.volumn);
+    },
+  },
   created() {
     this.menu = this.deskTopMenu;
     this.userName = localStorage.getItem("user_name") || "";
@@ -177,6 +212,32 @@ export default {
     this.$store.commit("getDockAppList");
   },
   methods: {
+    /**
+     * @description: 显示或隐藏日历
+     */
+    showOrHideCalendar() {
+      this.isCalendarShow = !this.isCalendarShow;
+    },
+    /**
+     * @description: 显示或隐藏音量操作
+     */
+    showOrHideVolumn() {
+      this.isVolumnShow = !this.isVolumnShow;
+      if (this.isVolumnShow) {
+        clearTimeout(this.volumnDelayTimer);
+        this.volumnDelayTimer = setTimeout(() => {
+          this.isVolumnShow = false;
+        }, 3000);
+      }
+    },
+    /**
+     * @description: 隐藏所有弹出的控制器
+     */
+    hideAllController() {
+      this.isVolumnShow = false;
+      this.rightMenuVisible = false;
+      this.isCalendarShow = false;
+    },
     /**
      * @description: 打开右键菜单
      */
@@ -235,6 +296,13 @@ export default {
 .top .el-dropdown {
   color: white !important;
   height: 100% !important;
+}
+.top .el-calendar-day {
+  height: 30px !important;
+}
+.top .is-today {
+  background: #4b9efb !important;
+  color: white !important;
 }
 </style>
 <style scoped lang="scss">
@@ -314,13 +382,50 @@ export default {
       justify-content: center;
       align-items: center;
       height: 100%;
-      .audio .iconfont,
-      .notification .iconfont {
-        font-size: 20px;
-      }
 
-      .datetime,
-      .audio,
+      .audio {
+        cursor: pointer;
+        padding: 0px 10px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        .iconfont {
+          font-size: 20px;
+        }
+        .el-slider {
+          position: absolute;
+          top: 40px;
+          height: 80px;
+        }
+      }
+      .audio:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .datetime {
+        cursor: pointer;
+        padding: 0px 10px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        .el-calendar {
+          color: #333;
+          background: rgba(255, 255, 255, 0.98);
+          position: fixed;
+          top: 40px;
+          right: 20px;
+          width: 500px;
+          border-radius: 10px;
+        }
+      }
+      .datetime:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
       .notification {
         cursor: pointer;
         padding: 0px 10px;
@@ -329,12 +434,12 @@ export default {
         justify-content: center;
         align-items: center;
         text-align: center;
-      }
-
-      .datetime:hover,
-      .audio:hover,
-      .notification:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        .iconfont {
+          font-size: 20px;
+        }
+        .notification:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
       }
     }
   }
