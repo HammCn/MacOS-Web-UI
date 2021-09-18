@@ -54,8 +54,8 @@ export default {
     };
   },
   created() {
-    // this.boot();
-    this.logined()
+    this.boot();
+    // this.logined()
   },
   methods: {
     onContextShow() {
