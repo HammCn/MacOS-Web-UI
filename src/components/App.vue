@@ -499,7 +499,7 @@ export default {
           .title {
             flex-grow: 1;
             text-align: center;
-            margin-right: 80px;
+            margin-right: 84px;
             font-weight: 500;
             text-shadow: none;
             font-size: 13px;
@@ -513,27 +513,32 @@ export default {
             margin-left: 15px;
             div {
               border-radius: 100%;
-              height: 11px;
-              width: 11px;
+              height: 15px;
+              width: 15px;
               margin-right: 8px;
               cursor: pointer;
             }
             .close {
               background: #fc605c;
-              border: 1px solid #fc635d;
+            }
+            .close:hover {
+              background: #cc2c26;
             }
             .min {
               background: #fcbb40;
-              border: 1px solid #f8b438;
+            }
+            .min:hover {
+              background: #c28719;
             }
             .full {
               background: #34c648;
-              border: 1px solid #2bc03f;
+            }
+            .full:hover {
+              background: #1f942e;
             }
 
             .full-disabled {
               background: #ccc !important;
-              border: 1px solid #ccc !important;
             }
           }
         }
