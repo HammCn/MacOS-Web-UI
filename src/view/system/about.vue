@@ -7,6 +7,14 @@
         <div class="version">{{ about.version }}</div>
       </div>
     </div>
+    <div class="badges">
+      <img
+        src="https://svg.hamm.cn/gitee.svg?type=star&user=hamm&project=mac-ui&logo=yes"
+      />
+      <img
+        src="https://svg.hamm.cn/gitee.svg?user=hamm&project=mac-ui&type=issue&logo=yes"
+      />
+    </div>
     <div class="copyright">{{ about.copyright }}</div>
   </div>
 </template>
@@ -42,7 +50,12 @@
       }
     }
   }
-
+  .badges {
+    text-align: center;
+    img {
+      margin: 0px 3px;
+    }
+  }
   .copyright {
     font-size: 12px;
     color: #999;
