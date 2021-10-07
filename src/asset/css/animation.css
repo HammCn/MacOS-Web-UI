@@ -59,32 +59,32 @@
     }
 }
 
-.slide-filter-enter-active {
-    animation: slide-filter-in 0.3s;
+.fade-menu-enter-active {
+    animation: fade-menu-in .1s;
 }
 
-.slide-filter-leave-active {
-    animation: slide-filter-out 0.3s;
+.fade-menu-leave-active {
+    animation: fade-menu-out .1s;
 }
 
-@keyframes slide-filter-in {
+@keyframes fade-menu-in {
     0% {
-        transform: translate(1000px, 0);
+        width: 0px;
         opacity: 0;
     }
     100% {
-        transform: translate(0, 0);
+        width: 200px;
         opacity: 1;
     }
 }
 
-@keyframes slide-filter-out {
+@keyframes fade-menu-out {
     0% {
-        transform: translate(0, 0);
+        width: 200px;
         opacity: 1;
     }
     100% {
-        transform: translate(-1000px, 0);
+        width: 0px;
         opacity: 0;
     }
 }
