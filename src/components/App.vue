@@ -513,8 +513,8 @@ export default {
             margin-left: 15px;
             div {
               border-radius: 100%;
-              height: 15px;
-              width: 15px;
+              height: 14px;
+              width: 14px;
               margin-right: 8px;
               cursor: pointer;
             }
