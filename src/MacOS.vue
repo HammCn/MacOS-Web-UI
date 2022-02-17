@@ -1,25 +1,23 @@
 <template>
-  <div
-    class="mac-os"
-    @mousedown.self="boot"
-    @contextmenu.prevent="onContextShow()"
-  >
+  <div class="mac-os"
+       @mousedown.self="boot"
+       @contextmenu.prevent="onContextShow()">
     <transition name="fade">
       <Bg v-if="isBg"></Bg>
     </transition>
     <transition name="fade">
-      <Loading v-if="isLoading" @loaded="loaded"></Loading>
+      <Loading v-if="isLoading"
+               @loaded="loaded"></Loading>
     </transition>
     <transition name="fade">
-      <Login v-if="isLogin" @logined="logined"></Login>
+      <Login v-if="isLogin"
+             @logined="logined"></Login>
     </transition>
     <transition name="fade">
-      <DeskTop
-        v-if="isDeskTop"
-        @lockScreen="lockScreen"
-        @shutdown="shutdown"
-        @logout="logout"
-      ></DeskTop>
+      <DeskTop v-if="isDeskTop"
+               @lockScreen="lockScreen"
+               @shutdown="shutdown"
+               @logout="logout"></DeskTop>
     </transition>
   </div>
 </template>
@@ -33,61 +31,47 @@
   bottom: 0;
 }
 </style>
-<script>
+<script setup>
 import Bg from "@/components/Bg";
 import Loading from "@/components/Loading";
 import Login from "@/components/Login";
 import DeskTop from "@/components/DeskTop";
-export default {
-  components: {
-    Bg,
-    Loading,
-    Login,
-    DeskTop,
-  },
-  data() {
-    return {
-      isBg: true,
-      isLoading: false,
-      isLogin: false,
-      isDeskTop: false,
-    };
-  },
-  created() {
-    this.boot();
-    // this.logined()
-  },
-  methods: {
-    onContextShow() {
-      console.log("onContextShow");
-    },
-    boot() {
-      this.isLoading = true;
-    },
-    loaded() {
-      this.isLoading = false;
-      this.isBg = true;
-      this.isLogin = true;
-    },
-    logined() {
-      this.isLogin = false;
-      this.isDeskTop = true;
-    },
-    lockScreen() {
-      this.isLogin = true;
-    },
-    logout() {
-      localStorage.removeItem("user_name");
-      this.isDeskTop = false;
-      this.isLogin = true;
-    },
-    shutdown() {
-      localStorage.removeItem("user_name");
-      this.isDeskTop = false;
-      this.isLogin = false;
-      this.isLoading = false;
-      this.isBg = false;
-    },
-  },
-};
+import { ref, onMounted } from 'vue'
+let isBg = ref(true)
+let isLoading = ref(false)
+let isLogin = ref(false)
+let isDeskTop = ref(false)
+onMounted(() => {
+  boot();
+})
+const onContextShow = () => {
+  console.log("onContextShow");
+}
+const boot = () => {
+  isLoading.value = true;
+}
+const loaded = () => {
+  isLoading.value = false;
+  isBg.value = true;
+  isLogin.value = true;
+}
+const logined = () => {
+  isLogin.value = false;
+  isDeskTop.value = true;
+}
+const lockScreen = () => {
+  isLogin.value = true;
+}
+const logout = () => {
+  localStorage.removeItem("user_name");
+  isDeskTop.value = false;
+  isLogin.value = true;
+}
+const shutdown = () => {
+  localStorage.removeItem("user_name");
+  isDeskTop.value = false;
+  isLogin.value = false;
+  isLoading.value = false;
+  isBg.value = false;
+}
 </script>
