@@ -1,28 +1,26 @@
 <template>
   <div class="task">
     <div class="task-list">
-      <template v-for="item in $store.state.openAppList" :key="item.pid">
-        <div
-          class="task-item"
-          :class="app && app.pid == item.pid ? 'active' : ''"
-          @click="selectApp(item)"
-        >
-          <i
-            class="iconfont"
-            :class="item.icon"
-            :style="{
+      <template v-for="item in $store.state.openAppList"
+                :key="item.pid">
+        <div class="task-item"
+             :class="app && app.pid == item.pid ? 'active' : ''"
+             @click="selectApp(item)">
+          <i class="iconfont"
+             :class="item.icon"
+             :style="{
               backgroundColor: item.iconBgColor,
               color: item.iconColor,
-            }"
-          ></i>
+            }"></i>
           <span class="task-name">{{ item.title }}</span>
         </div>
       </template>
     </div>
     <div class="task-ctrl">
-      <el-button size="mini" type="primary" :disabled="!app" @click="closeApp"
-        >强制退出</el-button
-      >
+      <el-button size="mini"
+                 type="primary"
+                 :disabled="!app.pid"
+                 @click="closeApp">强制退出</el-button>
     </div>
   </div>
 </template>
@@ -91,27 +89,19 @@
   }
 }
 </style>
-<script>
-export default {
-  data() {
-    return {
-      appList: [],
-      app: false,
-    };
-  },
-  created() {},
-  methods: {
-    selectApp(item) {
-      this.app = Object.assign({}, item);
-    },
-    closeApp() {
-      if (this.app) {
-        this.$emit("api", {
-          event: "closeApp",
-          pid: this.app.pid,
-        });
-      }
-    },
-  },
-};
+<script setup>
+import { reactive, defineEmits } from 'vue'
+const emit = defineEmits(['api'])
+let app = reactive({})
+const selectApp = (item) => {
+  Object.assign(app, item);
+}
+const closeApp = () => {
+  if (app.pid) {
+    emit("api", {
+      event: "closeApp",
+      pid: app.pid,
+    });
+  }
+}
 </script>
