@@ -47,8 +47,11 @@
             </div>
           </div>
           <div class="app-body">
-            <component :is="app.component" :app="app" @api="appEvent">
-            </component>
+            <component
+              :is="app.component"
+              :app="app"
+              @api="appEvent"
+            ></component>
           </div>
         </div>
         <div class="box-center-right" @mousedown="resizeMouseDown"></div>
@@ -67,6 +70,9 @@ import { defineAsyncComponent } from "vue";
 export default {
   components: {
     SystemAbout: defineAsyncComponent(() => import("@/view/system/about")),
+    SystemFinder: defineAsyncComponent(() => import("@/view/system/finder")),
+    SystemSetting: defineAsyncComponent(() => import("@/view/system/setting")),
+    SystemStore: defineAsyncComponent(() => import("@/view/system/store")),
     SystemTask: defineAsyncComponent(() => import("@/view/system/task")),
     Demo: defineAsyncComponent(() => import("@/view/demo/demo")),
     DemoDock: defineAsyncComponent(() => import("@/view/demo/dock")),

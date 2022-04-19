@@ -14,10 +14,16 @@
              @logined="logined"></Login>
     </transition>
     <transition name="fade">
-      <DeskTop v-if="isDeskTop"
-               @lockScreen="lockScreen"
-               @shutdown="shutdown"
-               @logout="logout"></DeskTop>
+      <DeskTop
+        v-if="isDeskTop"
+        @lockScreen="lockScreen"
+        @shutdown="shutdown"
+        @logout="logout"
+        @launchpad="launchpad"
+      ></DeskTop>
+    </transition>
+    <transition name="fade">
+      <LaunchPad v-if="isLaunchPad"></LaunchPad>
     </transition>
   </div>
 </template>
@@ -33,14 +39,18 @@
 </style>
 <script setup>
 import Bg from "@/components/Bg";
+import LaunchPad from "@/components/LaunchPad";
 import Loading from "@/components/Loading";
 import Login from "@/components/Login";
 import DeskTop from "@/components/DeskTop";
+
 import { ref, onMounted } from 'vue'
 let isBg = ref(true)
 let isLoading = ref(false)
 let isLogin = ref(false)
 let isDeskTop = ref(false)
+let isLaunchPad = ref(false)
+
 onMounted(() => {
   boot();
 })
@@ -61,6 +71,9 @@ const logined = () => {
 }
 const lockScreen = () => {
   isLogin.value = true;
+}
+const launchpad = (show) => {
+  isLaunchPad.value = show;
 }
 const logout = () => {
   localStorage.removeItem("user_name");

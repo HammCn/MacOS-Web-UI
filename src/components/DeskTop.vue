@@ -2,7 +2,9 @@
   <div class="desktop">
     <div class="top">
       <el-dropdown trigger="click">
-        <div class="logo"><i class="iconfont icon-apple1"></i></div>
+        <div class="logo">
+          <i class="iconfont icon-apple1"></i>
+        </div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="openAppByKey('system_about')">
@@ -12,15 +14,20 @@
             <el-dropdown-item @click="openAppByKey('system_setting')">
               <div>系统偏好设置</div>
             </el-dropdown-item>
+            <el-dropdown-item @click="openAppByKey('system_store')">
+              <div>应用商店</div>
+            </el-dropdown-item>
+            <el-dropdown-item class="line"></el-dropdown-item>
             <el-dropdown-item @click="openAppByKey('system_task')">
               <div>强制退出...</div>
-            </el-dropdown-item>
-            <el-dropdown-item @click="lockScreen">
-              <div>锁定屏幕</div>
             </el-dropdown-item>
             <el-dropdown-item class="line"></el-dropdown-item>
             <el-dropdown-item @click="shutdown">
               <div>关机...</div>
+            </el-dropdown-item>
+            <el-dropdown-item class="line"></el-dropdown-item>
+            <el-dropdown-item @click="lockScreen">
+              <div>锁定屏幕</div>
             </el-dropdown-item>
             <el-dropdown-item @click="logout">
               <div>退出登录 {{ userName }}...</div>
@@ -38,7 +45,10 @@
                   class="line"
                   v-if="subItem.isLine"
                 ></el-dropdown-item>
-                <el-dropdown-item v-else>
+                <el-dropdown-item
+                  v-else
+                  @click="$store.commit('openMenu', subItem.key)"
+                >
                   <div>{{ subItem.title }}</div>
                 </el-dropdown-item>
               </template>
@@ -66,12 +76,13 @@
         <div class="datetime" @click.self="showOrHideCalendar">
           {{ timeString }}
           <transition name="fade">
-            <el-calendar v-model="nowDate" v-if="isCalendarShow"> </el-calendar>
+            <el-calendar v-model="nowDate" v-if="isCalendarShow"></el-calendar>
           </transition>
         </div>
         <div class="notification">
           <i
             class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-25"
+            @click="showOrHideWidget"
           ></i>
         </div>
       </div>
@@ -130,6 +141,18 @@
           <div @click="openAppByKey('system_about')">关于我们</div>
         </div>
       </transition>
+      <transition-group name="fade-widget">
+        <div v-show="isWidgetShow">
+          <template v-for="item in $store.state.openWidgetList" :key="item.pid">
+            <Widget
+              v-if="!item.outLink"
+              v-show="!item.hide"
+              :app="item"
+              :key="item.pid"
+            ></Widget>
+          </template>
+        </div>
+      </transition-group>
     </div>
     <Dock></Dock>
   </div>
@@ -137,10 +160,12 @@
 <script>
 import App from "@/components/App";
 import Dock from "@/components/Dock";
+import Widget from "@/components/Widget";
 export default {
   components: {
     App,
     Dock,
+    Widget,
   },
   data() {
     return {
@@ -190,6 +215,7 @@ export default {
         //   ]
         // }
       ],
+      isWidgetShow: false,
     };
   },
   watch: {
@@ -202,6 +228,12 @@ export default {
     },
     "$store.state.volumn"() {
       console.log(this.$store.state.volumn);
+    },
+    "$store.state.nowApp"() {
+      this.menu = this.$store.state.nowApp.menu;
+    },
+    "$store.state.launchpad"() {
+      this.$emit("launchpad", this.$store.state.launchpad);
     },
   },
   created() {
@@ -288,6 +320,9 @@ export default {
      */
     logout() {
       this.$emit("logout");
+    },
+    showOrHideWidget() {
+      this.isWidgetShow = !this.isWidgetShow;
     },
   },
 };
