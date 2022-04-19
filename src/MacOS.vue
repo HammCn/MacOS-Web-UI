@@ -19,7 +19,11 @@
         @lockScreen="lockScreen"
         @shutdown="shutdown"
         @logout="logout"
+        @launchpad="launchpad"
       ></DeskTop>
+    </transition>
+    <transition name="fade">
+      <LaunchPad v-if="isLaunchPad"></LaunchPad>
     </transition>
   </div>
 </template>
@@ -35,6 +39,7 @@
 </style>
 <script>
 import Bg from "@/components/Bg";
+import LaunchPad from "@/components/LaunchPad";
 import Loading from "@/components/Loading";
 import Login from "@/components/Login";
 import DeskTop from "@/components/DeskTop";
@@ -44,6 +49,7 @@ export default {
     Loading,
     Login,
     DeskTop,
+    LaunchPad,
   },
   data() {
     return {
@@ -51,11 +57,16 @@ export default {
       isLoading: false,
       isLogin: false,
       isDeskTop: false,
+      isLaunchPad: false,
     };
   },
   created() {
-    this.boot();
-    // this.logined()
+    let user_name = localStorage.getItem("user_name");
+    if (user_name) {
+      this.logined();
+    } else {
+      this.boot();
+    }
   },
   methods: {
     onContextShow() {
@@ -72,6 +83,9 @@ export default {
     logined() {
       this.isLogin = false;
       this.isDeskTop = true;
+    },
+    launchpad(show) {
+      this.isLaunchPad = show;
     },
     lockScreen() {
       this.isLogin = true;

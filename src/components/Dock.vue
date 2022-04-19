@@ -35,7 +35,15 @@ export default {
   },
   methods: {
     openApp(item) {
-      this.$store.commit("openApp", item);
+      console.log(item);
+      switch (item.key) {
+        case "system_launchpad":
+          this.$store.commit("launchpad");
+          break;
+        default:
+          this.$store.commit("openApp", item);
+          break;
+      }
     },
   },
 };
@@ -51,7 +59,7 @@ export default {
   flex-direction: row;
   display: flex;
   padding: 2px;
-
+  z-index: 99990;
   .item {
     padding: 3px;
     display: flex;
