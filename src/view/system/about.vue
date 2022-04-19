@@ -8,12 +8,8 @@
       </div>
     </div>
     <div class="badges">
-      <img
-        src="https://svg.hamm.cn/gitee.svg?type=star&user=hamm&project=mac-ui&logo=yes"
-      />
-      <img
-        src="https://svg.hamm.cn/gitee.svg?user=hamm&project=mac-ui&type=issue&logo=yes"
-      />
+      <img src="https://svg.hamm.cn/gitee.svg?type=star&user=hamm&project=mac-ui&logo=yes" />
+      <img src="https://svg.hamm.cn/gitee.svg?user=hamm&project=mac-ui&type=issue&logo=yes" />
     </div>
     <div class="copyright">{{ about.copyright }}</div>
   </div>
@@ -64,17 +60,11 @@
   }
 }
 </style>
-<script>
-export default {
-  data() {
-    return {
-      about: {
-        title: "MacOS WebUI",
-        version: "v0.0.1 2021-08-10 22:22",
-        copyright: "本项目所用MacOS图标版权为Apple.Inc所有,向MacOS致敬!",
-      },
-    };
-  },
-  created() {},
-};
+<script setup>
+import { reactive } from 'vue'
+const about = reactive({
+  title: "MacOS WebUI",
+  version: "v0.0.1 2021-08-10 22:22",
+  copyright: "本项目所用MacOS图标版权为Apple.Inc所有,向MacOS致敬!",
+})
 </script>
