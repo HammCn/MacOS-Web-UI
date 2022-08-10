@@ -46,7 +46,7 @@ stages:
             target: ~/gitee_go/deploy
             dependArtifact: BUILD_ARTIFACT
         script:
-          - rm -rf /home/www/mac.hamm.cn &&
+          - 'rm -rf /home/www/mac.hamm.cn/* && '
           - tar zxvf ~/gitee_go/deploy/output.tar.gz -C /home/www/mac.hamm.cn
         notify: []
         strategy:
