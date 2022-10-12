@@ -555,6 +555,7 @@ export default {
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          height: 0;
         }
       }
       .box-center-right {
