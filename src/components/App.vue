@@ -91,7 +91,7 @@ export default {
   },
   watch: {
     app() {
-      this.appData = Object({}, this.app);
+      this.appData = Object({ title: this.appData.title }, this.app);
     },
   },
   data() {
