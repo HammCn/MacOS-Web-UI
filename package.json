@@ -10,11 +10,12 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
-    "element-plus": "^1.1.0-beta.12",
+    "element-plus": "^2.2.18",
     "register-service-worker": "^1.7.1",
     "vue": "^3.2.0",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0"
+    "vuex": "^4.0.0",
+    "vue3-eventbus": "^2.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
