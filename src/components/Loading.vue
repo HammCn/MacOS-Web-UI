@@ -22,11 +22,13 @@
   color: white;
   margin-top: -100px;
   z-index: 99999;
+
   .logo {
     .iconfont {
       font-size: 120px;
     }
   }
+
   .progress {
     margin-top: 50px;
     width: 200px;
@@ -35,6 +37,7 @@
     border-radius: 20px;
     overflow: hidden;
     position: relative;
+
     div {
       width: 20%;
       border-radius: 20px;
@@ -75,13 +78,13 @@ export default {
       }
     },
     updateProgress() {
-      this.progress += parseInt(Math.random() * 10);
+      this.progress += parseInt(Math.random() * 2);
       if (this.progress >= 100) {
         this.progress = 100;
         this.showProgress = false;
         setTimeout(() => this.$emit("loaded"), 1000);
       } else {
-        setTimeout(() => this.updateProgress(), 100);
+        requestAnimationFrame(this.updateProgress)
       }
     },
   },
