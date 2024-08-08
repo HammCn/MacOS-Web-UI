@@ -1,5 +1,6 @@
 import AppModel from "@/model/App";
 import tool from "@/helper/tool";
+import bus from 'vue3-eventbus'
 export default {
   state() {
     return {
@@ -207,7 +208,8 @@ export default {
         case "close":
           this.commit("closeApp", state.nowApp);
           break;
-        default:
+        default:          
+          bus.emit(key);  //默认通过事件总线发送，注意保证事件名称唯一
           break;
       }
     },

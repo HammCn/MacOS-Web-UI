@@ -91,7 +91,7 @@ export default {
   },
   watch: {
     app() {
-      this.appData = Object({}, this.app);
+      this.appData = Object({ title: this.appData.title }, this.app);
     },
   },
   data() {
@@ -555,6 +555,7 @@ export default {
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          height: 0;
         }
       }
       .box-center-right {
